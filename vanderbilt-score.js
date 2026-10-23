@@ -14,9 +14,9 @@
   // medical-data. Source: NICHQ Vanderbilt Assessment Scales, Scoring Instructions, ©2002 AAP/NICHQ, owner's PDF page 10
   // A positive symptom is 2 or 3; impairment is any one performance item scored 4 or 5.
   // A screen is met when its positive count reaches `need` AND (if withImpairment) there is impairment.
+  // Checked against the page 10 scoring instructions by the owner, 2026-10-23.
   const RULES = {
     parentInitial: {
-      verify: "VERIFY: owner to check against the page 10 scoring instructions",
       screens: [
         { id: "inattentive", label: "Predominantly Inattentive subtype", from: 1, to: 9, need: 6, withImpairment: true },
         { id: "hyperactive", label: "Predominantly Hyperactive/Impulsive subtype", from: 10, to: 18, need: 6, withImpairment: true },
@@ -30,7 +30,6 @@
       sideEffects: false
     },
     teacherInitial: {
-      verify: "VERIFY: owner to check against the page 10 scoring instructions",
       screens: [
         { id: "inattentive", label: "Predominantly Inattentive subtype", from: 1, to: 9, need: 6, withImpairment: true },
         { id: "hyperactive", label: "Predominantly Hyperactive/Impulsive subtype", from: 10, to: 18, need: 6, withImpairment: true },
@@ -47,7 +46,6 @@
     // (owner, 2026-10-22). Results still carry perf.impaired and perf.problems: they show which
     // areas are a problem, never a met/not-met label.
     parentFollowup: {
-      verify: "VERIFY: owner to check against the page 10 scoring instructions",
       screens: [
         { id: "inattentive", label: "Inattentive (items 1-9)", from: 1, to: 9, need: null, withImpairment: false },
         { id: "hyperactive", label: "Hyperactive/Impulsive (items 10-18)", from: 10, to: 18, need: null, withImpairment: false }
@@ -58,7 +56,6 @@
       sideEffects: true
     },
     teacherFollowup: {
-      verify: "VERIFY: owner to check against the page 10 scoring instructions",
       screens: [
         { id: "inattentive", label: "Inattentive (items 1-9)", from: 1, to: 9, need: null, withImpairment: false },
         { id: "hyperactive", label: "Hyperactive/Impulsive (items 10-18)", from: 10, to: 18, need: null, withImpairment: false }

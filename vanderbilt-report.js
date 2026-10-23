@@ -28,7 +28,7 @@
       raters.push({ slot: slot, label: C.raterLabel(r), formId: formId, answers: r.answers, result: result, error: !result.ok });
     });
     const missing = (packet.sent || []).filter(s => !(packet.raters || {})[s]).sort((a, b) => SLOTS.indexOf(a) - SLOTS.indexOf(b));
-    const verify = [...new Set(raters.map(r => S.RULES[r.formId].verify))];
+    const verify = [...new Set(raters.map(r => S.RULES[r.formId].verify).filter(Boolean))]; // only real VERIFY tags
     return {
       visit: packet.visit, visitShown: C.formatVisitCode(packet.visit), kind: packet.kind,
       raters: raters, missing: missing.map(s => ({ slot: s, label: SLOT_NAME[s] })),

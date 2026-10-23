@@ -16,13 +16,13 @@
   const BLANK_NOTE = "The printed blank for weeks or months is replaced by the TIME_KNOWN choice.";
 
   // medical-data. Source: NICHQ Vanderbilt Assessment Scales, ©2002 AAP/NICHQ (rev 1102/0303), owner's PDF, pages 2-9
+  // Checked word for word against the paper forms by the owner, 2026-10-23.
   const FORMS = {
     parentInitial: {
       role: "parent",
       kind: "initial",
       title: "NICHQ Vanderbilt Assessment Scale—PARENT Informant",
       directions: "Each rating should be considered in the context of what is appropriate for the age of your child. When completing this form, please think about your child’s behaviors in the past 6 months.",
-      verify: "VERIFY: owner to check transcription against the paper form",
       items: [
         { n: 1, type: "symptom", text: "Does not pay attention to details or makes careless mistakes with, for example, homework" },
         { n: 2, type: "symptom", text: "Has difficulty keeping attention to what needs to be done" },
@@ -89,7 +89,6 @@
       title: "NICHQ Vanderbilt Assessment Scale—TEACHER Informant",
       directions: "Each rating should be considered in the context of what is appropriate for the age of the child you are rating and should reflect that child’s behavior since the beginning of the school year. Please indicate the number of weeks or months you have been able to evaluate the behaviors: ___________.",
       directionsNote: BLANK_NOTE,
-      verify: "VERIFY: owner to check transcription against the paper form",
       items: [
         { n: 1, type: "symptom", text: "Fails to give attention to details or makes careless mistakes in schoolwork" },
         { n: 2, type: "symptom", text: "Has difficulty sustaining attention to tasks or activities" },
@@ -142,7 +141,6 @@
       kind: "followup",
       title: "NICHQ Vanderbilt Assessment Follow-up—PARENT Informant",
       directions: "Each rating should be considered in the context of what is appropriate for the age of your child. Please think about your child’s behaviors since the last assessment scale was filled out when rating his/her behaviors.",
-      verify: "VERIFY: owner to check transcription against the paper form",
       sideEffects: {
         question: "Has your child experienced any of the following side effects or problems in the past week?",
         scaleQuestion: "Are these side effects currently a problem?"
@@ -183,7 +181,6 @@
       title: "NICHQ Vanderbilt Assessment Follow-up—TEACHER Informant",
       directions: "Each rating should be considered in the context of what is appropriate for the age of the child you are rating and should reflect that child’s behavior since the last assessment scale was filled out. Please indicate the number of weeks or months you have been able to evaluate the behaviors: ___________.",
       directionsNote: BLANK_NOTE,
-      verify: "VERIFY: owner to check transcription against the paper form",
       sideEffects: {
         question: "Has the child experienced any of the following side effects or problems in the past week?",
         scaleQuestion: "Are these side effects currently a problem?"

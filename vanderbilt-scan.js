@@ -89,5 +89,37 @@
     return { start: start, stop: stop, readFrame: readFrame, useDetector: function (d) { detector = d; } };
   }
 
-  window.PedsVanderbiltScanner = Object.freeze({ create: create, loadJsQR: loadJsQR });
+  // A short burst of confetti after a scan adds a result (owner, 2026-10-23). Skipped when the
+  // system asks for reduced motion. A full-screen canvas that ignores clicks, removed when done.
+  function confetti() {
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const c = document.createElement("canvas");
+    c.className = "confetti";
+    c.setAttribute("aria-hidden", "true");
+    c.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+    document.body.append(c);
+    const dpr = window.devicePixelRatio || 1, W = innerWidth, H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    const g = c.getContext("2d"); g.scale(dpr, dpr);
+    const colors = ["#E5484D", "#FAF9F6", "#F5B53D", "#3FA36B", "#4C8BF5"];
+    const bits = Array.from({ length: 90 }, function () {
+      return { x: W / 2 + (Math.random() - 0.5) * W * 0.3, y: H * 0.35, vx: (Math.random() - 0.5) * 9, vy: -4 - Math.random() * 7,
+        r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, w: 6 + Math.random() * 6, h: 4 + Math.random() * 4,
+        col: colors[Math.floor(Math.random() * colors.length)] };
+    });
+    const start = performance.now();
+    setTimeout(function () { c.remove(); }, 2500); // backup: animation frames pause in a hidden tab
+    (function frame(now) {
+      const t = now - start;
+      g.clearRect(0, 0, W, H);
+      bits.forEach(function (b) {
+        b.vy += 0.25; b.vx *= 0.99; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        g.save(); g.translate(b.x, b.y); g.rotate(b.r); g.globalAlpha = Math.max(0, 1 - t / 1600);
+        g.fillStyle = b.col; g.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); g.restore();
+      });
+      if (t < 1600) requestAnimationFrame(frame); else c.remove();
+    })(start);
+  }
+
+  window.PedsVanderbiltScanner = Object.freeze({ create: create, loadJsQR: loadJsQR, confetti: confetti });
 })();

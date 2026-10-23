@@ -36,7 +36,9 @@
     back: "Back",
     skip: "Answer later",
 
-    reviewTitle: "Check your answers",
+    reviewTitle: "Summary and submit",
+    summaryButton: "Summary and submit",
+    clinicViewLink: "For clinicians: open the clinic view",
     reviewAllDone: "All {total} questions answered.",
     reviewSkipped: "{n} still to answer. Tap one to answer it.",
     reviewSkippedRow: "Not answered",

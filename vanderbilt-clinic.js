@@ -158,8 +158,10 @@
   function found(text) {
     let d;
     try { d = C.decode(text); } catch (e) { $("add-msg").textContent = e.message; return; }
-    $("add-msg").textContent = add(d);
+    const msg = add(d);
+    $("add-msg").textContent = msg;
     $("add-label").firstChild.textContent = "Add another result";
+    if (/results added|Packet opened/.test(msg)) window.PedsVanderbiltScanner.confetti();
   }
   const scanner = window.PedsVanderbiltScanner.create({
     video: $("scan-video"), canvas: $("scan-canvas"), panel: $("scanner"), onText: found,

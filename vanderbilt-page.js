@@ -183,6 +183,7 @@
     $("progress").textContent = t("progress", { n: i + 1, total: list.length });
     $("section-line").textContent = sectionFor(s);
     $("qtext").textContent = s.item ? s.item.n + ". " + s.item.text : s.text;
+    fitQuestion();
     const box = $("answers");
     box.textContent = "";
     scaleFor(s).forEach(o => {
@@ -200,6 +201,16 @@
     });
     $("qtext").focus();
   }
+  // Keeps the answer buttons in one place: the question area has a fixed height, and a long question
+  // gets a smaller font (down to 1 rem) until it fits (owner, 2026-10-23).
+  function fitQuestion() {
+    const head = $("qhead"), q = $("qtext");
+    let size = 1.45;
+    q.style.fontSize = size + "rem";
+    while (head.scrollHeight > head.clientHeight + 1 && size > 1.0) { size = Math.round((size - 0.05) * 100) / 100; q.style.fontSize = size + "rem"; }
+  }
+  addEventListener("resize", () => { if (!$("s-question").hidden) fitQuestion(); });
+  $("q-summary").addEventListener("click", () => { clearTimeout(advance); returnToReview = false; st.step = "review"; save(); render(); });
   function next(i) {
     if (returnToReview || i + 1 >= steps().length) { returnToReview = false; st.step = "review"; }
     else st.step = i + 1;
@@ -433,6 +444,7 @@
       const m = C.merge(getPacket(packetVisit), d.value);
       if (m.ok) { putPacket(m.packet); renderPacket(); }
       say(m.message);
+      if (m.ok && /results added/.test(m.message)) window.PedsVanderbiltScanner.confetti();
     },
     onError: () => { $("add-msg").textContent = t("cameraNA"); }
   });

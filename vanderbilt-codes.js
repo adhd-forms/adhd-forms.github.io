@@ -222,6 +222,9 @@
     putVisit(w, inv.visit);
     w.put(V1.kinds.indexOf(inv.kind), 2, "kind");
     w.put(V1.slots.indexOf(inv.slot), 4, "slot");
+    // Added 2026-10-23, last so that 0 (no) leaves every earlier invite byte-identical:
+    // 1 = this parent's teachers were given paper strips (the packet then expects T1 and T2).
+    w.put(inv.paper ? 1 : 0, 2, "paper");
     return wrap("invite", w);
   }
 
@@ -234,6 +237,7 @@
       value = getRater(r, visit, kind, V1.slots[r.get(4)], version);
     } else if (type === "invite") {
       value = { visit: visit, kind: kind, slot: V1.slots[r.get(4)] };
+      if (r.get(2) === 1) value.paper = true;
     } else {
       const sentBits = r.get(16), presentBits = r.get(16);
       value = { visit: visit, kind: kind, sent: [], raters: {} };

@@ -72,7 +72,7 @@
   function answerOf(s) { return s.item ? st.answers[s.item.n] : st.sideEffects[s.se]; }
   function setAnswer(s, v) { if (s.item) st.answers[s.item.n] = v; else st.sideEffects[s.se] = v; }
 
-  function begin(visit, kind, slot) {
+  function begin(visit, kind, slot, paper) {
     $("top-msg").textContent = "";
     returnToReview = false; // a flag left from another form must not carry over
     const saved = loadAll()[visit + ":" + slot];
@@ -83,6 +83,7 @@
       formOf().items.forEach(it => { st.answers[it.n] = null; });
     }
     delete st.savedAt;
+    if (paper) st.paper = true;
     // Keep the visit in the address (after "#", never sent anywhere) so a reload resumes it.
     const frag = C.toLink(C.encodeInvite({ visit: visit, kind: kind, slot: slot })).split("#")[1];
     if (location.hash.slice(1) !== frag) history.replaceState(null, "", "#" + frag);
@@ -260,7 +261,8 @@
     // A parent on the phone that holds the packet: add the result to it. Parent 1 starts the packet;
     // a second parent on their own phone (no packet here) gets the done screen to send it back.
     if (st.slot[0] === "P" && (st.slot === "P1" || getPacket(st.visit))) {
-      const p = getPacket(st.visit) || { visit: st.visit, kind: st.kind, sent: [], raters: {} };
+      // A paper handout's parent QR: both teachers got a strip, so the packet expects them.
+      const p = getPacket(st.visit) || { visit: st.visit, kind: st.kind, sent: st.paper ? ["T1", "T2"] : [], raters: {} };
       const m = C.merge(p, resultObject());
       if (m.ok) { putPacket(m.packet); return openPacket(st.visit, m.message); }
       $("top-msg").textContent = m.message;
@@ -476,7 +478,7 @@
     } else if (h.length > 1) {
       try {
         const d = C.decode(h);
-        if (d.type === "invite") return begin(d.value.visit, d.value.kind, d.value.slot);
+        if (d.type === "invite") return begin(d.value.visit, d.value.kind, d.value.slot, !!d.value.paper);
         // A result or packet: add it to this phone's packet for that visit, if there is one.
         const p = getPacket(d.value.visit);
         if (p) {

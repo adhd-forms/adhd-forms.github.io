@@ -129,6 +129,23 @@
   .handout ol { text-align: left; font-size: 13pt; line-height: 1.5; max-width: 150mm; margin: 0 auto 4mm; padding-left: 7mm; }
   .handout .h-note { font-size: 11pt; margin: 0 0 10mm; }
   .handout .h-stub { border-top: 1px dashed #000; padding-top: 4mm; font-size: 11pt; text-align: left; max-width: 150mm; margin: 0 auto; }
+  /* with teacher strips: a smaller parent part, a cut line, two strips side by side */
+  .handout.with-strips { padding-top: 6mm; }
+  .handout.with-strips h2 { font-size: 18pt; margin-bottom: 2mm; }
+  .handout.with-strips .h-kind { font-size: 13pt; margin-bottom: 2mm; }
+  .handout.with-strips .h-code { font-size: 24pt; margin-bottom: 2mm; }
+  .handout.with-strips .h-qr svg { width: 52mm; height: 52mm; margin-bottom: 3mm; }
+  .handout.with-strips ol { font-size: 11pt; line-height: 1.4; margin-bottom: 2mm; }
+  .handout.with-strips .h-note { margin-bottom: 3mm; font-size: 10pt; }
+  .handout.with-strips .h-stub { font-size: 10pt; border-top: 0; padding-top: 0; }
+  .h-strips { display: flex; gap: 6mm; margin-top: 5mm; padding-top: 5mm; border-top: 2px dashed #000; break-inside: avoid; page-break-inside: avoid; }
+  .h-strip { flex: 1; border: 1px solid #000; padding: 3mm; text-align: center; }
+  .h-strip + .h-strip { border-left: 1px solid #000; }
+  .h-strip-title { font-size: 12pt; font-weight: 600; margin: 0 0 2mm; color: #000; }
+  .h-qr-small svg { width: 36mm; height: 36mm; display: block; margin: 0 auto 2mm; }
+  .h-strip-code { font-family: var(--mono); font-size: 13pt; margin: 0 0 2mm; color: #000; }
+  .h-strip-text { font-size: 9.5pt; line-height: 1.35; margin: 0; text-align: left; }
+  .h-check { display: flex; align-items: center; gap: 8px; min-height: 48px; }
   .h-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
   .h-row input[type=number] { width: 6em; font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
   .h-row select { font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
@@ -199,6 +216,7 @@
       <div class="h-row">
         <label>Form<br><select id="h-kind"><option value="initial">First visit</option><option value="followup">Follow-up</option></select></label>
         <label>How many<br><input type="number" id="h-count" min="1" max="50" value="20"></label>
+        <label class="h-check"><input type="checkbox" id="h-strips" checked> Include 2 teacher strips</label>
         <button type="button" class="btn" id="h-print">Print handouts</button>
       </div>
     </section>
@@ -224,7 +242,7 @@
 
 <script src="vanderbilt-forms.js?v=2"></script>
 <script src="vanderbilt-score.js?v=1"></script>
-<script src="vanderbilt-codes.js?v=2"></script>
+<script src="vanderbilt-codes.js?v=3"></script>
 <script src="vanderbilt-note-template.js?v=1"></script>
 <script src="vanderbilt-report.js?v=1"></script>
 <div id="handouts"></div>
@@ -232,6 +250,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=1"></script>
-<script src="vanderbilt-clinic.js?v=3"></script>
+<script src="vanderbilt-clinic.js?v=4"></script>
 </body>
 </html>

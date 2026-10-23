@@ -199,7 +199,14 @@
     "On your phone, tap Send to teacher for each teacher.",
     "When the forms are done, tap Send to your doctor and paste it into a MyChart message, or bring your phone to the visit."
   ];
-  function buildHandouts(kind, count) {
+  // With teacher strips (owner, 2026-10-23): step 2 becomes "give each teacher a strip".
+  const HANDOUT_STEPS_PAPER = [
+    HANDOUT_STEPS[0],
+    "Give each teacher one of the strips below (or tap Send to teacher on your phone).",
+    HANDOUT_STEPS[2]
+  ];
+  const STRIP_TEXT = "Scan with your phone camera and answer the questions about this student (about 10 minutes, no names needed). When you finish, tap Send results to parent, or print the result page and give it to the parent.";
+  function buildHandouts(kind, count, strips) {
     const box = $("handouts"), used = new Set();
     box.textContent = "";
     while (used.size < count) used.add(C.newVisitCode());
@@ -210,19 +217,33 @@
         el("p", "h-kind", kind === "initial" ? "First visit" : "Follow-up"),
         el("p", "h-code", shown));
       const qr = el("div", "h-qr");
-      qr.append(qrSvg(C.toLink(C.encodeInvite({ visit: visit, kind: kind, slot: "P1" })), "QR code to start the form for visit " + shown));
+      qr.append(qrSvg(C.toLink(C.encodeInvite({ visit: visit, kind: kind, slot: "P1", paper: strips })), "QR code to start the form for visit " + shown));
       const ol = el("ol");
-      HANDOUT_STEPS.forEach(s => ol.append(el("li", null, s)));
+      (strips ? HANDOUT_STEPS_PAPER : HANDOUT_STEPS).forEach(s => ol.append(el("li", null, s)));
       page.append(qr, ol,
         el("p", "h-note", "No names or birthdays are asked. Answers stay on your phone until you send them."),
         el("p", "h-stub", "For the chart: visit code " + shown + " (staff, please write this in the chart)."));
+      if (strips) {
+        const row = el("div", "h-strips");
+        ["T1", "T2"].forEach((slot, i) => {
+          const strip = el("div", "h-strip");
+          strip.dataset.slot = slot;
+          const sq = el("div", "h-qr-small");
+          sq.append(qrSvg(C.toLink(C.encodeInvite({ visit: visit, kind: kind, slot: slot })), "QR code for teacher " + (i + 1) + ", visit " + shown));
+          strip.append(el("p", "h-strip-title", "For a teacher (Teacher " + (i + 1) + ")"), sq,
+            el("p", "h-strip-code", shown), el("p", "h-strip-text", STRIP_TEXT));
+          row.append(strip);
+        });
+        page.classList.add("with-strips");
+        page.append(row);
+      }
       box.append(page);
     });
   }
   $("h-print").addEventListener("click", () => {
     const n = Math.max(1, Math.min(50, Math.round(Number($("h-count").value)) || 1));
     $("h-count").value = n;
-    buildHandouts($("h-kind").value === "followup" ? "followup" : "initial", n);
+    buildHandouts($("h-kind").value === "followup" ? "followup" : "initial", n, $("h-strips").checked);
     document.body.classList.add("print-handouts");
     window.print();
   });

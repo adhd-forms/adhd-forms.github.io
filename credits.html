@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Credits: ADHD Rating Forms</title>
+<meta name="theme-color" content="#0D0D0C">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="shared.js?v=3"></script>
+<style>
+  :root { --page: #F4F4F5; --panel: #FFFFFF; --heading: #18181B; --body: #52525B; --border: #E4E4E7; --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --radius: 4px; --serif: Georgia, "Times New Roman", serif; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; } }
+  :root[data-theme="dark"] { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--serif); }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 64px 16px 32px; position: relative; }
+  .band h1 { font-weight: 500; font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .back { position: absolute; top: 18px; left: 16px; color: var(--band-muted); font-size: 14px; }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-family: var(--mono); font-size: 12px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; }
+  h2 { font-weight: 500; font-size: 1.4rem; color: var(--heading); margin: 24px 0 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <a class="back" href="./">← ADHD Rating Forms</a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>Credits</h1>
+  </div>
+</header>
+<main class="wrap">
+  <h2>The forms</h2>
+  <p>NICHQ Vanderbilt Assessment Scales and Follow-up forms. Copyright ©2002 American Academy of Pediatrics and National Initiative for Children’s Healthcare Quality. Adapted from the Vanderbilt Rating Scales developed by Mark L. Wolraich, MD. Side effects adapted from the Pittsburgh side effects scale, developed by William E. Pelham, Jr, PhD.</p>
+  <h2>QR codes</h2>
+  <p>QR codes are drawn with <a href="https://github.com/kazuhikoarase/qrcode-generator">QR Code Generator for JavaScript</a> by Kazuhiko Arase (MIT license; copyright 2009 Kazuhiko Arase). The clinic page reads QR codes with <a href="https://github.com/cozmo/jsQR">jsQR</a> by Cosmo Wolfe (<a href="vendor/jsQR-LICENSE.txt">Apache License 2.0</a>) when the browser has no built-in reader. Both are saved in this site unchanged. QR Code is a registered trademark of DENSO WAVE INCORPORATED.</p>
+  <h2>Made by</h2>
+  <p>Dr. Christian Rada, DO, as part of <a href="https://christianrada-do.github.io/peds-tools/">Pediatric Tools</a>. Made with <a href="https://claude.com/claude-code">Claude</a>.</p>
+</main>
+<script src="credits.js"></script>
+</body>
+</html>

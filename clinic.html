@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Privacy (owner's spec): results live only in this page and in the link after "#". Nothing is
+     stored or sent. No third-party scripts or fonts, no inline scripts, no referrer. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>ADHD Forms: Clinic</title>
+<meta name="description" content="Clinician view of NICHQ Vanderbilt ADHD rating results: merge results by visit code and copy a plain note for the chart.">
+<meta name="theme-color" content="#0D0D0C">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Own home-screen app (opens straight on this page) -->
+<link rel="manifest" href="clinic.webmanifest">
+<meta name="apple-mobile-web-app-title" content="ADHD Clinic">
+<script src="shared.js?v=3"></script>
+<style>
+  /* Same tokens as index.html. System fonts only (no web fonts on this site). */
+  :root {
+    --page: #F4F4F5; --panel: #FFFFFF; --soft: #FAFAFA;
+    --brand: #232323; --brand-text: #FFFFFF;
+    --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --heading: #18181B; --body: #52525B; --border: #E4E4E7; --subtle: #F2F2F2;
+    --warn-bg: #FEF2F2; --warn-border: #FCA5A5; --warn-text: #7F1D1D;
+    --hi-bg: #FFF7E0; --hi-text: #6B4A00;
+    --focus: #161616; --radius: 4px;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+      --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+      --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6;
+      --hi-bg: #2E2614; --hi-text: #F2D99A; --focus: #FAF9F6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+    --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+    --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6;
+    --hi-bg: #2E2614; --hi-text: #F2D99A; --focus: #FAF9F6;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--sans); }
+  strong, b { color: var(--heading); font-weight: 600; }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 40px 16px 32px; position: relative; }
+  header.band .band-inner { padding-top: 64px; }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band .by { margin: 0; color: var(--band-muted); }
+  .back { position: absolute; top: 18px; left: 16px; color: var(--band-muted); font-size: 14px; }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: 13px; }
+  footer.band p { margin: 0 0 8px; color: var(--band-muted); }
+  footer.band a { color: inherit; text-underline-offset: 2px; }
+  footer.band .credit { margin-top: 14px; font-size: 14px; }
+  footer.band .sprite-credit { font-size: 12px; opacity: .8; }
+  .pixel-heart { vertical-align: -2px; margin: 0 2px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  h3 { font-family: var(--serif); font-weight: 500; font-size: 1.2rem; color: var(--heading); margin: 0 0 6px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .btn { font: inherit; font-weight: 600; font-size: 16px; border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+    background: var(--brand); color: var(--brand-text); cursor: pointer; }
+  .btn.secondary { background: var(--panel); color: var(--heading); border-color: var(--border); }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
+  [hidden] { display: none !important; }
+  input[type=text] { font: inherit; font-family: var(--mono); font-size: 16px; width: 100%; min-height: 48px; padding: 8px 12px;
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+  .pin-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pin-row input { width: 7.5em; font-family: var(--mono); font-size: 22px; letter-spacing: .3em; min-height: 48px; padding: 8px 12px;
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+  .pin-msg { margin: 8px 0 0; min-height: 1.2em; color: var(--warn-text); font-weight: 600; }
+
+  /* report */
+  .top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+  .visit-big { font-family: var(--mono); font-size: clamp(1.8rem, 9vw, 2.6rem); color: var(--heading); letter-spacing: .04em; }
+  .kind-big { font-family: var(--serif); font-size: 1.5rem; color: var(--heading); }
+  .note { font-family: var(--mono); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--soft); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 12px; margin: 10px 0 0; color: var(--heading); }
+  .verify { margin: 12px 0 0; padding: 8px 12px; border-left: 3px solid var(--warn-border); background: var(--warn-bg); color: var(--warn-text); font-size: 14.5px; }
+  .rater { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+  .rater ul { list-style: none; margin: 4px 0 0; padding: 0; }
+  .rater li { padding: 2px 0; }
+  .met { color: var(--heading); font-weight: 600; }
+  .could { background: var(--hi-bg); color: var(--hi-text); padding: 0 4px; border-radius: 3px; }
+  .missing { margin: 12px 0 0; color: var(--warn-text); }
+  details.drill { margin-top: 4px; }
+  details.drill summary { cursor: pointer; min-height: 44px; padding: 10px 0; color: var(--heading); font-family: var(--serif); font-size: 1.2rem; }
+  .table-box { overflow-x: auto; margin: 8px 0 16px; border: 1px solid var(--border); border-radius: var(--radius); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--heading); font-weight: 600; background: var(--soft); }
+  td.v { font-family: var(--mono); text-align: center; white-space: nowrap; }
+  td.v.pos { color: var(--heading); font-weight: 700; }
+  td.v.prob { color: var(--warn-text); font-weight: 700; }
+  tr.disagree td { background: var(--hi-bg); }
+  td.n { font-family: var(--mono); color: var(--heading); }
+  .legend { font-size: 13px; margin: 0 0 6px; }
+  #scan-video { display: block; width: 100%; max-width: 420px; margin-top: 12px; border-radius: var(--radius); background: #000; }
+  @media print {
+    :root, :root[data-theme="dark"], :root[data-theme="light"], :root:not([data-theme="light"]) {
+      --page:#FFF; --panel:#FFF; --soft:#FFF; --subtle:#EEE; --heading:#000; --body:#222; --border:#999; --band:#FFF; --band-text:#000; --band-muted:#333;
+      --brand:#000; --brand-text:#FFF; --hi-bg:#EEE; --hi-text:#000;
+    }
+    .theme-toggle, .back, #pin-form, .noprint { display: none !important; }
+    /* "Print handouts": only the handouts, one per page */
+    body.print-handouts header, body.print-handouts main, body.print-handouts footer { display: none !important; }
+    body.print-handouts #handouts { display: block; }
+    .handout { break-after: page; page-break-after: always; padding: 10mm 6mm; color: #000; text-align: center; }
+    .handout:last-child { break-after: auto; page-break-after: auto; }
+  }
+  /* handouts (print only) */
+  #handouts { display: none; }
+  .handout h2 { font-size: 22pt; color: #000; margin: 0 0 4mm; }
+  .handout .h-kind { font-size: 16pt; margin: 0 0 4mm; }
+  .handout .h-code { font-family: var(--mono); font-size: 30pt; letter-spacing: .06em; margin: 0 0 4mm; color: #000; }
+  .handout .h-qr svg { width: 70mm; height: 70mm; display: block; margin: 0 auto 6mm; }
+  .handout ol { text-align: left; font-size: 13pt; line-height: 1.5; max-width: 150mm; margin: 0 auto 4mm; padding-left: 7mm; }
+  .handout .h-note { font-size: 11pt; margin: 0 0 10mm; }
+  .handout .h-stub { border-top: 1px dashed #000; padding-top: 4mm; font-size: 11pt; text-align: left; max-width: 150mm; margin: 0 auto; }
+  .h-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+  .h-row input[type=number] { width: 6em; font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+  .h-row select { font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <a class="back" href="https://christianrada-do.github.io/peds-tools/">← Pediatric Tools</a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>ADHD Forms: Clinic</h1>
+    <p class="by">By Dr. Christian Rada, DO · Clinician reference</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- PIN gate (same PIN and unlock as the hub). Not real security: the page is public. -->
+  <form class="card" id="pin-form" autocomplete="off">
+    <label for="pin">Enter the clinician PIN</label>
+    <div class="pin-row">
+      <input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" aria-describedby="pin-msg">
+      <button class="btn" type="submit">Unlock</button>
+    </div>
+    <p class="pin-msg" id="pin-msg" role="alert"></p>
+  </form>
+
+  <div id="tool" data-pin-gated hidden>
+    <section class="card noprint">
+      <label for="add-in" id="add-label"><strong>Add a result</strong></label>
+      <p class="legend">Paste a link (from MyChart or a QR) or type a backup code. Add each person's result one at a time; they are matched by visit code.</p>
+      <input type="text" id="add-in" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="btns">
+        <button type="button" class="btn" id="add-go">Add</button>
+        <button type="button" class="btn secondary" id="scan-go">Scan a QR code</button>
+      </div>
+      <p class="msg" id="add-msg" role="status" aria-live="polite"></p>
+      <div id="scanner" hidden>
+        <video id="scan-video" playsinline muted></video>
+        <canvas id="scan-canvas" hidden></canvas>
+        <p class="legend" id="scan-status">Point the camera at the QR code.</p>
+        <div class="btns"><button type="button" class="btn secondary" id="scan-stop">Stop</button></div>
+      </div>
+    </section>
+
+    <p id="empty">No results yet. Nothing on this page is saved or sent; it lives only in this tab and its address.</p>
+
+    <section class="card" id="report" hidden>
+      <div class="top"><span class="visit-big" id="r-visit"></span><span class="kind-big" id="r-kind"></span></div>
+      <div class="btns noprint"><button type="button" class="btn" id="copy-epic">Copy for Epic</button></div>
+      <pre class="note" id="r-note"></pre>
+      <p class="verify" id="r-verify" hidden>Not yet checked against the paper forms by Dr. Rada: item wording and scoring rules.</p>
+      <div id="r-raters"></div>
+      <p class="missing" id="r-missing" hidden></p>
+      <details class="drill">
+        <summary>Item by item</summary>
+        <p class="legend">Numbers are the answers (symptoms 0-3, performance 1-5). Bold = positive (2 or 3) or a problem (4 or 5). Tinted rows: positive for some raters and not others.</p>
+        <div id="r-tables"></div>
+      </details>
+    </section>
+
+    <section class="card noprint">
+      <h3>Print handouts</h3>
+      <p class="legend">One page per family, each with its own new visit code and a QR code that opens the parent's form. Staff writes the code from the handout in the chart.</p>
+      <div class="h-row">
+        <label>Form<br><select id="h-kind"><option value="initial">First visit</option><option value="followup">Follow-up</option></select></label>
+        <label>How many<br><input type="number" id="h-count" min="1" max="50" value="20"></label>
+        <button type="button" class="btn" id="h-print">Print handouts</button>
+      </div>
+    </section>
+
+    <div class="btns noprint">
+      <button type="button" class="btn secondary" id="clear">Clear from this device</button>
+      <button type="button" class="btn secondary" id="lock-btn">Lock clinician section</button>
+    </div>
+  </div>
+</main>
+
+<footer class="band">
+  <div class="band-inner">
+    <p>Questions and scoring: NICHQ Vanderbilt Assessment Scales, Copyright ©2002 American Academy of Pediatrics and National Initiative for Children’s Healthcare Quality. Adapted from the Vanderbilt Rating Scales developed by Mark L. Wolraich, MD. Side effects adapted from the Pittsburgh side effects scale, developed by William E. Pelham, Jr, PhD. These scales should not be used alone to make a diagnosis.</p>
+    <p class="credit">Made with
+      <svg class="pixel-heart" viewBox="0 0 7 6" width="14" height="12" role="img" aria-label="love" shape-rendering="crispEdges">
+        <path fill="#E5484D" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"/>
+      </svg>
+      <a href="https://claude.com/claude-code">Claude</a></p>
+    <p class="sprite-credit"><a href="credits.html">Credits</a><span class="gh-link" hidden> · <a href="https://github.com/adhd-forms/adhd-forms.github.io">Source code on GitHub</a></span></p>
+  </div>
+</footer>
+
+<script src="vanderbilt-forms.js?v=1"></script>
+<script src="vanderbilt-score.js?v=1"></script>
+<script src="vanderbilt-codes.js?v=1"></script>
+<script src="vanderbilt-note-template.js?v=1"></script>
+<script src="vanderbilt-report.js?v=1"></script>
+<div id="handouts"></div>
+
+<script src="vendor/qrcode-generator-2.0.4.js"></script>
+<script src="vendor/jsQR-1.4.0.js"></script>
+<script src="vanderbilt-clinic.js?v=1"></script>
+</body>
+</html>

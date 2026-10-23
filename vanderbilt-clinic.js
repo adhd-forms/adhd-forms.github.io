@@ -154,71 +154,20 @@
     else select();
   });
 
-  // ---------- QR scanner: BarcodeDetector when the browser has it, otherwise jsQR (vendor/) ----------
-  // `run` counts scan sessions: Stop/Clear/hide bump it, so a camera request or a frame loop from an
-  // older session sees it is stale and stops its own tracks instead of running on.
-  let stream = null, timer = null, detector = null, run = 0;
-  function stopScan() {
-    run++;
-    clearTimeout(timer); timer = null;
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    stream = null;
-    $("scan-video").srcObject = null;
-    $("scanner").hidden = true;
-  }
-  // Reads one frame; returns the QR text or null.
-  async function readFrame(video) {
-    if (detector) {
-      const found = await detector.detect(video);
-      return found.length ? found[0].rawValue : null;
-    }
-    const w = Math.min(640, video.videoWidth), h = Math.round(video.videoHeight * w / (video.videoWidth || 1));
-    if (!w || !h) return null;
-    const c = $("scan-canvas"); c.width = w; c.height = h;
-    const g = c.getContext("2d", { willReadFrequently: true });
-    g.drawImage(video, 0, 0, w, h);
-    const img = g.getImageData(0, 0, w, h);
-    const code = window.jsQR(img.data, w, h, { inversionAttempts: "dontInvert" });
-    return code ? code.data : null;
-  }
+  // ---------- QR scanner (vanderbilt-scan.js) ----------
   function found(text) {
-    stopScan();
     let d;
     try { d = C.decode(text); } catch (e) { $("add-msg").textContent = e.message; return; }
     $("add-msg").textContent = add(d);
     $("add-label").firstChild.textContent = "Add another result";
   }
-  async function tick(mine) {
-    if (!stream || mine !== run) return;
-    try { const text = await readFrame($("scan-video")); if (mine !== run) return; if (text) return found(text); } catch (e) { /* try the next frame */ }
-    if (mine === run) timer = setTimeout(() => tick(mine), 250);
-  }
-  $("scan-go").addEventListener("click", async () => {
-    stopScan();
-    const mine = run;
-    detector = null;
-    try {
-      if (window.BarcodeDetector && (await window.BarcodeDetector.getSupportedFormats()).indexOf("qr_code") >= 0) detector = new window.BarcodeDetector({ formats: ["qr_code"] });
-    } catch (e) { detector = null; }
-    let s;
-    try {
-      s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-    } catch (e) {
-      if (mine === run) $("add-msg").textContent = "Camera not available. Paste the link or type the code instead.";
-      return;
-    }
-    // Stop, Clear or another Scan happened while the camera was being requested: end this stream.
-    if (mine !== run) { s.getTracks().forEach(t => t.stop()); return; }
-    stream = s;
-    $("scanner").hidden = false;
-    const v = $("scan-video");
-    v.srcObject = stream;
-    try { await v.play(); } catch (e) { /* autoplay is allowed for muted video; keep trying frames */ }
-    tick(mine);
+  const scanner = window.PedsVanderbiltScanner.create({
+    video: $("scan-video"), canvas: $("scan-canvas"), panel: $("scanner"), onText: found,
+    onError: () => { $("add-msg").textContent = "Camera not available. Paste the link or type the code instead."; }
   });
+  const stopScan = scanner.stop;
+  $("scan-go").addEventListener("click", scanner.start);
   $("scan-stop").addEventListener("click", stopScan);
-  addEventListener("pagehide", stopScan);
-  document.addEventListener("visibilitychange", () => { if (document.hidden) stopScan(); });
 
   $("clear").addEventListener("click", () => {
     stopScan();
@@ -294,6 +243,6 @@
   addEventListener("hashchange", fromHash);
   fromHash();
   // For checks in the console only: run one frame through the same reader the scanner uses.
-  window.PedsVanderbiltScan = { readFrame: readFrame, found: found, useDetector: d => { detector = d; } };
+  window.PedsVanderbiltScan = { readFrame: scanner.readFrame, found: found, useDetector: scanner.useDetector };
   if (window.PedsShared) window.PedsShared.init();
 })();

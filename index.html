@@ -67,6 +67,7 @@
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
   .btn.secondary { background: var(--panel); color: var(--heading); border-color: var(--border); }
   .btn:disabled { opacity: .45; cursor: not-allowed; }
+  #p-scan-video { display: block; width: 100%; max-width: 420px; margin-top: 12px; border-radius: var(--radius); background: #000; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   button:focus-visible, a:focus-visible, input:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
   .hint { font-size: 14.5px; margin: 6px 0 0; }
@@ -225,8 +226,15 @@
     <div class="btns">
       <button type="button" class="btn" id="packet-doctor" data-t="sendDoctor"></button>
       <button type="button" class="btn secondary" id="packet-show" data-t="showDoctor"></button>
+      <button type="button" class="btn secondary" id="packet-scan" data-t="scanTeacher"></button>
     </div>
     <p class="steps" id="doctor-steps" role="status" hidden></p>
+    <div id="p-scanner" hidden>
+      <video id="p-scan-video" playsinline muted></video>
+      <canvas id="p-scan-canvas" hidden></canvas>
+      <p class="hint" data-t="scanHint"></p>
+      <div class="btns"><button type="button" class="btn secondary" id="p-scan-stop" data-t="scanStop"></button></div>
+    </div>
     <label class="field" for="add-in" data-t="addByCode"></label>
     <p class="hint" data-t="addByCodeHint"></p>
     <input type="text" id="add-in" class="wide" autocomplete="off" autocapitalize="characters" spellcheck="false">
@@ -276,7 +284,8 @@
 <script src="vanderbilt-score.js?v=1"></script>
 <script src="vanderbilt-codes.js?v=2"></script>
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
-<script src="vanderbilt-strings-en.js?v=2"></script>
-<script src="vanderbilt-page.js?v=2"></script>
+<script src="vanderbilt-scan.js?v=1"></script>
+<script src="vanderbilt-strings-en.js?v=3"></script>
+<script src="vanderbilt-page.js?v=3"></script>
 </body>
 </html>

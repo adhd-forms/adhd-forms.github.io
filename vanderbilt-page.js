@@ -93,6 +93,8 @@
   // ---------- screens ----------
   let packetVisit = null; // set while the packet screen is shown
   function show(id) {
+    // Leaving the packet screen turns the camera off (discharge check, case 9).
+    if (id !== "s-packet" && window.PedsVanderbiltParentScan) window.PedsVanderbiltParentScan.stop();
     ["s-start", "s-setup", "s-question", "s-review", "s-done", "s-packet"].forEach(s => { $(s).hidden = s !== id; });
     $("share-panel").hidden = true;
     $("result-box").hidden = true;
@@ -417,6 +419,24 @@
     if (m.ok) { putPacket(m.packet); $("add-in").value = ""; renderPacket(); }
     say(m.message);
   });
+
+  // Scan a teacher's (or the other parent's) result QR straight into this packet (owner, 2026-10-23).
+  const pScanner = window.PedsVanderbiltScanner.create({
+    video: $("p-scan-video"), canvas: $("p-scan-canvas"), panel: $("p-scanner"),
+    onText: text => {
+      const say = msg => { $("add-msg").textContent = msg; };
+      let d;
+      try { d = C.decode(text, packetVisit); } catch (e) { return say(e.message); }
+      if (d.type === "invite") return say(t("inviteNotResult"));
+      const m = C.merge(getPacket(packetVisit), d.value);
+      if (m.ok) { putPacket(m.packet); renderPacket(); }
+      say(m.message);
+    },
+    onError: () => { $("add-msg").textContent = t("cameraNA"); }
+  });
+  $("packet-scan").addEventListener("click", pScanner.start);
+  $("p-scan-stop").addEventListener("click", pScanner.stop);
+  window.PedsVanderbiltParentScan = pScanner; // for checks in the console only
 
   // A results link opened on a phone with no packet for that visit: the parent can start one here.
   let pendingItem = null;

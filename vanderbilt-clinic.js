@@ -33,7 +33,18 @@
 
   $("add-go").addEventListener("click", () => {
     let d;
-    try { d = C.decode($("add-in").value); } catch (e) { $("add-msg").textContent = e.message; return; }
+    // Typed backup codes carry only a visit tag: check them against the packet's visit, or the one entered.
+    let visit = packet ? packet.visit : null;
+    // A link carries its own visit code, so the field only matters for typed codes.
+    if (!visit && $("visit-in").value.trim() && $("add-in").value.indexOf("#") < 0) {
+      try { visit = C.parseVisitCode($("visit-in").value); } catch (e) { $("add-msg").textContent = e.message; return; }
+    }
+    try { d = C.decode($("add-in").value, visit); } catch (e) { $("add-msg").textContent = e.message; return; }
+    // Never replace a visit code the user typed: a code for another visit is refused, not adopted.
+    if (!packet && visit && d.value && d.value.visit && d.value.visit !== visit) {
+      $("add-msg").textContent = "Visit codes don't match: " + C.formatVisitCode(visit) + " vs " + C.formatVisitCode(d.value.visit) + ". Nothing was added.";
+      return;
+    }
     $("add-msg").textContent = add(d);
     $("add-in").value = "";
     $("add-label").firstChild.textContent = "Add another result";
@@ -98,7 +109,14 @@
     return wrap;
   }
 
+  // The visit code field follows the packet: filled and locked once there is one, empty otherwise.
+  function syncVisit() {
+    const v = $("visit-in");
+    if (packet) { v.value = C.formatVisitCode(packet.visit); v.readOnly = true; }
+    else { v.readOnly = false; }
+  }
   function render() {
+    syncVisit();
     $("empty").hidden = !!packet;
     $("report").hidden = !packet;
     if (!packet) return;
@@ -205,7 +223,7 @@
   $("clear").addEventListener("click", () => {
     stopScan();
     if (packet && !confirm("Clear these results from this page?")) return;
-    packet = null; setAddress(); render();
+    packet = null; setAddress(); $("visit-in").value = ""; render();
     $("add-msg").textContent = "Cleared.";
     $("add-label").firstChild.textContent = "Add a result";
   });

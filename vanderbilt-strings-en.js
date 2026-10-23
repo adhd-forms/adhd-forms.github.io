@@ -25,7 +25,7 @@
     setupTime: "How long have you known this student?",
     setupNeedTeacher: "Please choose both before starting.",
     setupMedQuestion: "{lead} …?",
-    setupMedOptional: "Optional",
+    setupNeedMed: "Please answer the medication question.",
     setupStart: "Start",
     backToPacket: "Back to your child's forms",
 
@@ -34,14 +34,15 @@
     sectionPerformance: "Performance",
     sectionSideEffects: "Side effects",
     back: "Back",
-    skip: "Skip",
+    skip: "Answer later",
 
     reviewTitle: "Check your answers",
     reviewAllDone: "All {total} questions answered.",
-    reviewSkipped: "{n} of {total} questions skipped. Tap one to answer it.",
-    reviewSkippedRow: "Skipped",
+    reviewSkipped: "{n} still to answer. Tap one to answer it.",
+    reviewSkippedRow: "Not answered",
+    reviewSetupRow: "Medication question (and, for teachers, your role and how long you have known the student)",
+    reviewNeedAll: "Answer every question to finish ({n} left).",
     reviewSubmit: "Submit",
-    reviewConfirmSkipped: "Skipped questions: {n}. Submit anyway?",
     reviewError: "Something went wrong. Please go back and check your answers.",
 
     doneTitle: "Thank you",
@@ -57,7 +58,10 @@
     // returning results (teachers, or a parent on their own phone)
     doneSendParent: "Send results to parent",
     donePrint: "Print or save PDF",
-    printLine: "Give this page to the parent, or bring it to the clinic. Scan the code or type the backup code.",
+    printLine: "Give this page to the parent or send them the QR code, so they can bring it to their physician.",
+    printTitle: "ADHD Rating Form ({who}) {date}",
+    whoTeacher: "Teacher",
+    whoParent: "Parent",
 
     // the parent's packet
     packetTitle: "Your child's forms",

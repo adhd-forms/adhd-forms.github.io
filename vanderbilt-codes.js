@@ -1,17 +1,16 @@
-/* Pediatric Tools: Vanderbilt visit codes, links, typed backup codes and packet merging.
+/* ADHD Rating Forms: Vanderbilt visit codes, links, typed backup codes and packet merging.
    No server: answers travel only inside links (after "#", never sent to a server), QR codes
    and typed codes. Load after the form data:
-     <script src="vanderbilt-forms.js?v=1"></script>
-     <script src="vanderbilt-codes.js?v=1"></script>
+     <script src="vanderbilt-forms.js?v=2"></script>
+     <script src="vanderbilt-codes.js?v=2"></script>
    Exposes only window.PedsVanderbiltCodes. Bump ?v= on every page that loads it when it changes.
 
-   Format v1: bytes = [header][body][CRC-16]. Header = version (high 4 bits) + type (low 4 bits:
-   1 rater result, 2 packet, 3 invite). Body = one mixed-radix number, first field in the lowest
-   digits, so each field can be read in order. CRC-16/CCITT-FALSE over header + body catches
-   damaged links and typos in typed codes (it is the typed code's check: any one wrong character
-   or two swapped neighbours are always caught). Never change a v1 table below: old links must
-   keep decoding. A new layout gets a new version number and its own entry in DECODERS.
-   Chart note: .claude/chart/2026-10-22-vanderbilt-encoding.md (notes repo). */
+   Links, QR codes and long typed codes: bytes = [header][body][CRC-16]. Header = version (high 4 bits:
+   1 or 2) + type (low 4 bits: 1 rater result, 2 packet, 3 invite). Body = one mixed-radix number,
+   first field in the lowest digits. v2 (2026-10-23) = v1 with seven teacher roles.
+   Short typed backup codes (2026-10-23): see SHORT below (no visit code inside, two Damm checks).
+   Never change the V1, V2 or SHORT tables: old links and codes must keep decoding.
+   Chart notes: .claude/chart/2026-10-22-vanderbilt-encoding.md, 2026-10-23-vanderbilt-short-codes.md. */
 (function () {
   "use strict";
 
@@ -20,7 +19,7 @@
   // Page that opens links (the tool's own site since 2026-10-23; every link and printed QR carries it).
   const BASE = "https://adhd-forms.github.io/";
 
-  const VERSION = 1;
+  const VERSION = 2; // links, QR codes and long typed codes are written as v2; v1 still decodes
   const TYPES = { result: 1, packet: 2, invite: 3 };
   const LINK_LETTER = { result: "r", packet: "p", invite: "i" };
 
@@ -40,6 +39,10 @@
     timeKnown: ["lt3m", "3to6m", "gt6m"],
     medication: ["on", "off", "unsure"]
   };
+  // ---------- v2 link tables (frozen forever; owner, 2026-10-23) ----------
+  // Same layout as v1, but the teacher role has radix 8: the v1 six keep their numbers, then social studies.
+  const V2 = { teacherRoles: V1.teacherRoles.concat(["socstudies"]) };
+  const rolesFor = function (version) { return version === 1 ? V1.teacherRoles : V2.teacherRoles; };
   const SLOT_NAME = { P1: "Parent 1", P2: "Parent 2", T1: "Teacher 1", T2: "Teacher 2" };
 
   function formId(slot, kind) {
@@ -136,9 +139,9 @@
 
   // Rater fields and answers (no visit code, kind or slot: those come from the wrapper).
   function putRater(w, slot, kind, res) {
-    const teacher = slot[0] === "T";
+    const teacher = slot[0] === "T", roles = rolesFor(VERSION);
     if (!teacher && (res.teacherRole || res.timeKnown)) fail("Can't encode teacher details for a parent");
-    w.put(idIndex(V1.teacherRoles, res.teacherRole, "teacher role"), 7, "teacher role");
+    w.put(idIndex(roles, res.teacherRole, "teacher role"), roles.length + 1, "teacher role");
     w.put(idIndex(V1.timeKnown, res.timeKnown, "time known"), 4, "time known");
     w.put(idIndex(V1.medication, res.medication, "medication"), 4, "medication");
     const layout = V1.layout[formId(slot, kind)];
@@ -162,9 +165,9 @@
       }
     }
   }
-  function getRater(r, visit, kind, slot) {
-    const res = { visit: visit, kind: kind, slot: slot };
-    res.teacherRole = idAt(V1.teacherRoles, r.get(7));
+  function getRater(r, visit, kind, slot, version) {
+    const res = { visit: visit, kind: kind, slot: slot }, roles = rolesFor(version);
+    res.teacherRole = idAt(roles, r.get(roles.length + 1));
     res.timeKnown = idAt(V1.timeKnown, r.get(4));
     res.medication = idAt(V1.medication, r.get(4));
     if (slot[0] === "P" && (res.teacherRole || res.timeKnown)) fail(DAMAGED);
@@ -222,13 +225,13 @@
     return wrap("invite", w);
   }
 
-  function decodeV1(type, body) {
+  function decodeLink(version, type, body) {
     const r = new Reader(bytesToBig(body));
     const visit = getVisit(r);
     const kind = V1.kinds[r.get(2)];
     let value;
     if (type === "result") {
-      value = getRater(r, visit, kind, V1.slots[r.get(4)]);
+      value = getRater(r, visit, kind, V1.slots[r.get(4)], version);
     } else if (type === "invite") {
       value = { visit: visit, kind: kind, slot: V1.slots[r.get(4)] };
     } else {
@@ -239,13 +242,16 @@
       });
       if (sentBits > 15 || presentBits > 15) fail(DAMAGED);
       V1.slots.forEach(function (s, i) {
-        if (presentBits & (1 << i)) value.raters[s] = getRater(r, visit, kind, s);
+        if (presentBits & (1 << i)) value.raters[s] = getRater(r, visit, kind, s, version);
       });
     }
-    if (r.n !== 0n) fail(DAMAGED); // leftover digits: not a real v1 payload
+    if (r.n !== 0n) fail(DAMAGED); // leftover digits: not a real payload
     return value;
   }
-  const DECODERS = { 1: decodeV1 };
+  const DECODERS = {
+    1: function (type, body) { return decodeLink(1, type, body); },
+    2: function (type, body) { return decodeLink(2, type, body); }
+  };
 
   function decodeBytes(bytes) {
     if (bytes.length < 4) fail(DAMAGED);
@@ -287,11 +293,28 @@
     const type = Object.keys(TYPES).find(function (k) { return TYPES[k] === (bytes[0] & 15); });
     return BASE + "#" + LINK_LETTER[type] + bitsToText(bytes, 6, B64);
   }
-  function toTyped(bytes) {
-    return bitsToText(bytes, 5, B32).match(/.{1,4}/g).join("-");
+  // Long typed form: the whole link payload in base 32 (CRC-16 checked). Used for old v1 codes and for
+  // results that aren't complete (forms saved before every question became required).
+  // 22, 24 and 29 characters belong to short codes only (owner, 2026-10-23: no old codes exist), so a long
+  // code that would land on one of those lengths gets one leading zero byte in its body (same number,
+  // one character longer or more). A short code with typos can then never be read as a long one.
+  function toTypedLong(bytes) {
+    let b = bytes;
+    if (SHORT.lengths.indexOf(Math.ceil(b.length * 8 / 5)) >= 0) {
+      const head = [b[0], 0].concat(b.slice(1, -2)), c = crc16(head);
+      b = head.concat([c >> 8, c & 255]);
+    }
+    return bitsToText(b, 5, B32).match(/.{1,4}/g).join("-");
+  }
+  // The backup code for a result: the short code when the result is complete, otherwise the long one.
+  // (Bytes are still accepted and give the long form.)
+  function toTyped(x) {
+    if (Array.isArray(x)) return toTypedLong(x);
+    return isComplete(x) ? toTypedShort(x) : toTypedLong(encodeResult(x));
   }
 
-  function decode(text) {
+  // visit: needed only for short typed codes (they carry a visit tag, not the visit code).
+  function decode(text, visit) {
     const s = String(text || "").trim();
     if (!s) fail("Paste a link or type a code first.");
     let bytes, letter = null;
@@ -311,11 +334,126 @@
         if (i < 0) fail("Unknown character \"" + c + "\". Codes use only numbers and letters (no U).");
         return i;
       });
-      bytes = textToBits(vals, 5);
+      // 22, 24 or 29 characters: a short code, nothing else. Any other length: a long code (the whole
+      // link payload in base 32, CRC-16 checked), as made for unfinished older drafts.
+      if (SHORT.lengths.indexOf(vals.length) >= 0) return { type: "result", version: 2, short: true, value: decodeShort(vals, visit) };
+      return decodeBytes(textToBits(vals, 5));
     }
     const out = decodeBytes(bytes);
     if (letter !== null && LINK_LETTER[out.type] !== letter) fail(DAMAGED);
     return out;
+  }
+
+  // ---------- short typed codes (format v2; owner's spec, 2026-10-23; frozen forever) ----------
+  // One mixed-radix number, first field in the lowest digits: version (radix 4, value 1), combined rater
+  // field (radix 88), medication (radix 3, required), visit tag (radix 1024), then every item (symptoms 0-3,
+  // performance 1-5 stored as 0-4, side effects 0-3; all required). Written in Crockford base 32, most
+  // significant first, padded to a fixed length per form, then two check characters: c1 = Damm (multiplier 2)
+  // over the data, c2 = Damm (multiplier 4) over the data and c1. Both are totally anti-symmetric
+  // quasigroups x∘y = a·x ⊕ y over GF(32) (polynomial x^5 + x^2 + 1), so every single typo, every swap of
+  // neighbours and every pair of typos is caught. The visit code itself isn't inside: only a 10-bit tag
+  // (the same two check characters computed over the visit code), so the clinic enters the visit code once.
+  const SHORT = {
+    version: 1,
+    dataLength: { parentInitial: 27, teacherInitial: 22, parentFollowup: 20, teacherFollowup: 20 },
+    lengths: [22, 24, 29]
+  };
+  function gfMul(x, k) {
+    let r = 0;
+    for (let i = 0; i < 5; i++) { if (k & (1 << i)) r ^= x; x = ((x << 1) ^ ((x & 16) ? 0x25 : 0)) & 31; }
+    return r;
+  }
+  function dammFold(digits, a) { return digits.reduce(function (c, d) { return gfMul(c, a) ^ d; }, 0); }
+  function checkPair(digits) {
+    const c1 = gfMul(dammFold(digits, 2), 2);
+    const c2 = gfMul(dammFold(digits.concat([c1]), 4), 4);
+    return [c1, c2];
+  }
+  function checksOk(all) {
+    return dammFold(all.slice(0, -1), 2) === 0 && dammFold(all, 4) === 0;
+  }
+  function visitTag(visit) {
+    const pair = checkPair([...parseVisitCode(visit)].map(function (c) { return B32.indexOf(c); }));
+    return pair[0] * 32 + pair[1];
+  }
+  // Rater field: parents 0-3 (kind × 2 + slot), teachers 4-87 (4 + ((kind × 2 + slot) × 7 + role) × 3 + time).
+  function combinedOf(res) {
+    const kind = V1.kinds.indexOf(res.kind), slot = V1.slots.indexOf(res.slot);
+    if (kind < 0 || slot < 0) fail("Can't encode this form");
+    if (slot < 2) {
+      if (res.teacherRole || res.timeKnown) fail("Can't encode teacher details for a parent");
+      return kind * 2 + slot;
+    }
+    const role = V2.teacherRoles.indexOf(res.teacherRole), time = V1.timeKnown.indexOf(res.timeKnown);
+    if (role < 0 || time < 0) fail("incomplete: teacher role and time known are required");
+    return 4 + ((kind * 2 + slot - 2) * 7 + role) * 3 + time;
+  }
+  function fromCombined(c) {
+    if (c < 4) return { kind: V1.kinds[c >> 1], slot: V1.slots[c & 1], teacherRole: null, timeKnown: null };
+    const x = c - 4, time = x % 3, rest = (x - time) / 3, role = rest % 7, ks = (rest - role) / 7;
+    return { kind: V1.kinds[ks >> 1], slot: V1.slots[2 + (ks & 1)], teacherRole: V2.teacherRoles[role], timeKnown: V1.timeKnown[time] };
+  }
+  // True when every answer the short code needs is there (all items, medication, teacher details).
+  function isComplete(res) {
+    try { shortDigits(res); return true; } catch (e) { return false; }
+  }
+  function shortDigits(res) {
+    const w = new Writer();
+    w.put(SHORT.version, 4, "version");
+    w.put(combinedOf(res), 88, "rater");
+    const med = V1.medication.indexOf(res.medication);
+    if (med < 0) fail("incomplete: medication is required");
+    w.put(med, 3, "medication");
+    w.put(visitTag(res.visit), 1024, "visit tag");
+    const fid = formId(res.slot, res.kind), layout = V1.layout[fid], answers = res.answers || {};
+    for (let n = 1; n <= layout.length; n++) {
+      const v = answers[n];
+      if (v === null || v === undefined) fail("incomplete: item " + n + " is not answered");
+      if (layout[n - 1] === "s") w.put(answerDigit(v, 0, 3, "item " + n) - 1, 4, "item " + n);
+      else w.put(answerDigit(v, 1, 5, "item " + n) - 1, 5, "item " + n);
+    }
+    if (res.kind === "followup") {
+      const se = res.sideEffects;
+      if (!Array.isArray(se) || se.length !== V1.sideEffects) fail("incomplete: side effects are required");
+      se.forEach(function (v, i) {
+        if (v === null || v === undefined) fail("incomplete: side effect " + (i + 1) + " is not answered");
+        w.put(answerDigit(v, 0, 3, "side effect " + (i + 1)) - 1, 4, "side effect " + (i + 1));
+      });
+    } else if (res.sideEffects !== null && res.sideEffects !== undefined) fail("Can't encode side effects on an initial form");
+    let n = w.toBigInt();
+    const len = SHORT.dataLength[fid], digits = [];
+    for (let i = 0; i < len; i++) { digits.unshift(Number(n & 31n)); n >>= 5n; }
+    if (n !== 0n) fail("Can't encode: too long for this form");
+    return digits;
+  }
+  function toTypedShort(res) {
+    const digits = shortDigits(res);
+    return digits.concat(checkPair(digits)).map(function (d) { return B32[d]; }).join("").match(/.{1,4}/g).join("-");
+  }
+
+  // Reads a short code. Order (plan review): length, check characters, version, form matches length,
+  // answers and leftovers, then the visit code and its tag. So a garbled code gets the typo message first.
+  function decodeShort(vals, visit) {
+    if (SHORT.lengths.indexOf(vals.length) < 0 || !checksOk(vals)) fail(DAMAGED);
+    let n = 0n;
+    vals.slice(0, -2).forEach(function (d) { n = (n << 5n) | BigInt(d); });
+    const r = new Reader(n);
+    if (r.get(4) !== SHORT.version) fail(DAMAGED);
+    const c = r.get(88), who = fromCombined(c);
+    const fid = formId(who.slot, who.kind);
+    if (SHORT.dataLength[fid] + 2 !== vals.length) fail("This code is the wrong length for its form. Check it and try again.");
+    const res = { visit: null, kind: who.kind, slot: who.slot, teacherRole: who.teacherRole, timeKnown: who.timeKnown,
+      medication: V1.medication[r.get(3)], answers: {}, sideEffects: null };
+    const tag = r.get(1024);
+    const layout = V1.layout[fid];
+    for (let i = 1; i <= layout.length; i++) res.answers[i] = layout[i - 1] === "s" ? r.get(4) : r.get(5) + 1;
+    if (who.kind === "followup") { res.sideEffects = []; for (let i = 0; i < V1.sideEffects; i++) res.sideEffects.push(r.get(4)); }
+    if (r.n !== 0n) fail(DAMAGED);
+    if (!visit) fail("Enter the visit code first.");
+    const v = parseVisitCode(visit);
+    if (visitTag(v) !== tag) fail("This code is for a different visit than " + formatVisitCode(v) + ". Check the visit code and the backup code.");
+    res.visit = v;
+    return res;
   }
 
   // ---------- labels and merging ----------
@@ -371,7 +509,8 @@
     BASE: BASE, VERSION: VERSION, V1: deepFreeze(V1), VISIT_ALPHABET: VISIT_ALPHABET,
     newVisitCode: newVisitCode, parseVisitCode: parseVisitCode, formatVisitCode: formatVisitCode,
     encodeResult: encodeResult, encodePacket: encodePacket, encodeInvite: encodeInvite,
-    toLink: toLink, toTyped: toTyped, decode: decode, crc16: crc16,
+    toLink: toLink, toTyped: toTyped, toTypedLong: toTypedLong, toTypedShort: toTypedShort, isComplete: isComplete,
+    visitTag: visitTag, gfMul: gfMul, SHORT: deepFreeze(SHORT), V2: deepFreeze(V2), decode: decode, crc16: crc16,
     formId: formId, raterLabel: raterLabel, merge: merge
   });
 })();

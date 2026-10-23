@@ -159,6 +159,10 @@
     <section class="card noprint">
       <label for="add-in" id="add-label"><strong>Add a result</strong></label>
       <p class="legend">Paste a link (from MyChart or a QR) or type a backup code. Add each person's result one at a time; they are matched by visit code.</p>
+      <label for="visit-in"><strong>Visit code</strong></label>
+      <p class="legend">Needed for typed backup codes (they don't include it). Filled in for you once a link or QR is added.</p>
+      <input type="text" id="visit-in" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="7KQ4-M9XD">
+      <p class="legend" style="margin-top:12px">Link, QR text or backup code:</p>
       <input type="text" id="add-in" autocomplete="off" autocapitalize="characters" spellcheck="false">
       <div class="btns">
         <button type="button" class="btn" id="add-go">Add</button>
@@ -218,15 +222,15 @@
   </div>
 </footer>
 
-<script src="vanderbilt-forms.js?v=1"></script>
+<script src="vanderbilt-forms.js?v=2"></script>
 <script src="vanderbilt-score.js?v=1"></script>
-<script src="vanderbilt-codes.js?v=1"></script>
+<script src="vanderbilt-codes.js?v=2"></script>
 <script src="vanderbilt-note-template.js?v=1"></script>
 <script src="vanderbilt-report.js?v=1"></script>
 <div id="handouts"></div>
 
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
-<script src="vanderbilt-clinic.js?v=1"></script>
+<script src="vanderbilt-clinic.js?v=2"></script>
 </body>
 </html>

@@ -74,6 +74,7 @@
 
   function begin(visit, kind, slot) {
     $("top-msg").textContent = "";
+    returnToReview = false; // a flag left from another form must not carry over
     const saved = loadAll()[visit + ":" + slot];
     if (saved && saved.kind === kind) st = saved;
     else {
@@ -148,7 +149,7 @@
       pills($("role-pick"), "role", F.TEACHER_ROLES, st.teacherRole, v => { st.teacherRole = v; save(); });
       pills($("time-pick"), "time", F.TIME_KNOWN, st.timeKnown, v => { st.timeKnown = v; save(); });
     }
-    $("med-legend").textContent = t("setupMedQuestion", { lead: F.MEDICATION_QUESTION }) + " (" + t("setupMedOptional") + ")";
+    $("med-legend").textContent = t("setupMedQuestion", { lead: F.MEDICATION_QUESTION });
     pills($("med-pick"), "med", F.MEDICATION, st.medication, v => { st.medication = v; save(); });
     // A parent on the phone that holds this visit's packet can go back to it (owner, 2026-10-22).
     $("setup-back").hidden = !(st.slot[0] === "P" && getPacket(st.visit));
@@ -156,8 +157,11 @@
   $("setup-back").addEventListener("click", () => { const v = st.visit; st = null; openPacket(v); });
   $("setup-go").addEventListener("click", () => {
     if (st.slot[0] === "T" && (!st.teacherRole || !st.timeKnown)) { $("setup-msg").textContent = t("setupNeedTeacher"); return; }
+    if (!st.medication) { $("setup-msg").textContent = t("setupNeedMed"); return; }
     $("setup-msg").textContent = "";
-    st.step = 0; save(); render();
+    // Opened from the review screen: go back there (plan review, 2026-10-23).
+    st.step = returnToReview ? "review" : 0; returnToReview = false;
+    save(); render();
   });
 
   function sectionFor(s) {
@@ -198,7 +202,8 @@
     else st.step = i + 1;
     save(); render();
   }
-  $("q-skip").addEventListener("click", () => { clearTimeout(advance); const i = st.step; setAnswer(steps()[i], null); next(i); });
+  // "Answer later": moves on and keeps any answer already given (every question is needed to finish).
+  $("q-skip").addEventListener("click", () => { clearTimeout(advance); next(st.step); });
   $("q-back").addEventListener("click", () => {
     clearTimeout(advance);
     returnToReview = false;
@@ -207,14 +212,30 @@
   });
 
   function labelFor(s, v) { const o = scaleFor(s).find(x => x.value === v); return o ? o.label : t("reviewSkippedRow"); }
+  // Setup answers the code needs: medication, and for teachers the role and how long they've known the student.
+  function setupMissing() { return !st.medication || (st.slot[0] === "T" && (!st.teacherRole || !st.timeKnown)); }
+  function leftToAnswer() { return steps().filter(s => answerOf(s) === null).length + (setupMissing() ? 1 : 0); }
   function renderReview() {
     show("s-review");
-    const list = steps(), skipped = list.filter(s => answerOf(s) === null).length;
+    const list = steps(), skipped = list.filter(s => answerOf(s) === null).length, left = leftToAnswer();
     const head = $("review-head");
-    head.textContent = skipped ? t("reviewSkipped", { n: skipped, total: list.length }) : t("reviewAllDone", { total: list.length });
-    head.classList.toggle("warn", skipped > 0);
+    head.textContent = left ? t("reviewSkipped", { n: left, total: list.length + 1 }) : t("reviewAllDone", { total: list.length });
+    head.classList.toggle("warn", left > 0);
+    // Every question is required (owner, 2026-10-23): Submit stays off until all are answered.
+    $("review-submit").disabled = left > 0;
+    $("review-msg").textContent = left ? t("reviewNeedAll", { n: left }) : "";
     const ul = $("review-list");
     ul.textContent = "";
+    if (setupMissing()) {
+      const li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button"; b.classList.add("skipped");
+      const n = document.createElement("span"); n.className = "n"; n.textContent = "·";
+      const q = document.createElement("span"); q.textContent = t("reviewSetupRow");
+      const a = document.createElement("span"); a.className = "a"; a.textContent = t("reviewSkippedRow");
+      b.append(n, q, a);
+      b.addEventListener("click", () => { returnToReview = true; st.step = "setup"; save(); render(); });
+      li.append(b); ul.append(li);
+    }
     list.forEach((s, i) => {
       const li = document.createElement("li"), b = document.createElement("button");
       b.type = "button";
@@ -228,8 +249,7 @@
     });
   }
   $("review-submit").addEventListener("click", () => {
-    const skipped = steps().filter(s => answerOf(s) === null).length;
-    if (skipped && !confirm(t("reviewConfirmSkipped", { n: skipped }))) return;
+    if (leftToAnswer()) return renderReview();
     // Never show a code for answers the scoring would reject.
     const sc = S.score(C.formId(st.slot, st.kind), { answers: st.answers, sideEffects: st.sideEffects, medication: st.medication });
     if (!sc.ok) { $("review-msg").textContent = t("reviewError"); return; }
@@ -255,7 +275,7 @@
     show("s-done");
     const bytes = resultBytes();
     $("done-visit").textContent = t("doneVisit", { visit: C.formatVisitCode(st.visit) });
-    $("done-code").textContent = C.toTyped(bytes);
+    $("done-code").textContent = C.toTyped(resultObject()); // short code when complete, long one for older drafts
     $("done-link").textContent = C.toLink(bytes);
   }
   $("done-copy").addEventListener("click", () => {
@@ -274,12 +294,21 @@
   $("done-print").addEventListener("click", () => {
     const bytes = resultBytes();
     drawQR($("print-qr"), C.toLink(bytes), t("doneQrLabel"));
-    $("print-code").textContent = C.toTyped(bytes);
+    $("print-code").textContent = C.toTyped(resultObject());
     $("print-visit").textContent = t("doneVisit", { visit: C.formatVisitCode(st.visit) });
     document.body.classList.add("print-result");
+    // The saved PDF is named after the page title: "ADHD Rating Form (Teacher) 2026-10-23" (owner, 2026-10-23).
+    // The date is this device's date and goes only into the file name, never into the answers.
+    printTitle = document.title;
+    const d = new Date(), date = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    document.title = t("printTitle", { who: t(st.slot[0] === "T" ? "whoTeacher" : "whoParent"), date: date });
     window.print();
   });
-  addEventListener("afterprint", () => document.body.classList.remove("print-result"));
+  let printTitle = null;
+  addEventListener("afterprint", () => {
+    document.body.classList.remove("print-result");
+    if (printTitle !== null) { document.title = printTitle; printTitle = null; }
+  });
 
   // ---------- QR codes (vendor/qrcode-generator, error correction M, 4-module quiet zone) ----------
   function drawQR(box, text, label) {
@@ -382,7 +411,7 @@
   $("add-go").addEventListener("click", () => {
     const say = text => { $("add-msg").textContent = text; };
     let d;
-    try { d = C.decode($("add-in").value); } catch (e) { return say(e.message); }
+    try { d = C.decode($("add-in").value, packetVisit); } catch (e) { return say(e.message); }
     if (d.type === "invite") return say(t("inviteNotResult"));
     const m = C.merge(getPacket(packetVisit), d.value);
     if (m.ok) { putPacket(m.packet); $("add-in").value = ""; renderPacket(); }

@@ -290,6 +290,7 @@
     { id: "math", label: "Math" },
     { id: "ela", label: "ELA/Reading" },
     { id: "science", label: "Science" },
+    { id: "socstudies", label: "Social studies" }, // added 2026-10-23 (owner); codes use V2.teacherRoles, not this order
     { id: "sped", label: "Special education" },
     { id: "other", label: "Other" }
   ];

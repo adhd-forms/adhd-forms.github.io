@@ -62,7 +62,7 @@
   // ---------- state ----------
   let st = null;        // { visit, kind, slot, step, answers, sideEffects, medication, teacherRole, timeKnown, submitted }
   let returnToReview = false;
-  let advance = null;   // pending auto-advance after an answer; Back and Skip cancel it
+  let advance = null;   // pending auto-advance after an answer; Back and Review Questions cancel it
   const formOf = () => F.FORMS[C.formId(st.slot, st.kind)];
   function steps() {
     const list = formOf().items.map(it => ({ item: it }));
@@ -216,8 +216,6 @@
     else st.step = i + 1;
     save(); render();
   }
-  // "Answer later": moves on and keeps any answer already given (every question is needed to finish).
-  $("q-skip").addEventListener("click", () => { clearTimeout(advance); next(st.step); });
   $("q-back").addEventListener("click", () => {
     clearTimeout(advance);
     returnToReview = false;

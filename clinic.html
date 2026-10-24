@@ -16,7 +16,7 @@
 <!-- Own home-screen app (opens straight on this page) -->
 <link rel="manifest" href="clinic.webmanifest">
 <meta name="apple-mobile-web-app-title" content="ADHD Clinic">
-<script src="shared.js?v=3"></script>
+<script src="shared.js?v=4"></script>
 <style>
   /* Same tokens as index.html. System fonts only (no web fonts on this site). */
   :root {
@@ -26,6 +26,8 @@
     --heading: #18181B; --body: #52525B; --border: #E4E4E7; --subtle: #F2F2F2;
     --warn-bg: #FEF2F2; --warn-border: #FCA5A5; --warn-text: #7F1D1D;
     --hi-bg: #FFF7E0; --hi-text: #6B4A00;
+    /* control edges at 3:1 or more against the card; grey fill for secondary buttons (owner, 2026-10-24) */
+    --edge: #8A8A93; --nav: #E4E4E7; --track: #D4D4D8;
     --focus: #161616; --radius: 4px;
     --serif: Georgia, "Times New Roman", serif;
     --sans: Georgia, "Times New Roman", serif;
@@ -37,6 +39,7 @@
       --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
       --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6;
       --hi-bg: #2E2614; --hi-text: #F2D99A; --focus: #FAF9F6;
+    --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
     }
   }
   :root[data-theme="dark"] {
@@ -44,6 +47,7 @@
     --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
     --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6;
     --hi-bg: #2E2614; --hi-text: #F2D99A; --focus: #FAF9F6;
+    --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -70,16 +74,16 @@
   .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
   .btn { font: inherit; font-weight: 600; font-size: 16px; border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
-  .btn.secondary { background: var(--panel); color: var(--heading); border-color: var(--border); }
+  .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
   [hidden] { display: none !important; }
   input[type=text] { font: inherit; font-family: var(--mono); font-size: 16px; width: 100%; min-height: 48px; padding: 8px 12px;
-    border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+    border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
   .pin-row { display: flex; gap: 10px; flex-wrap: wrap; }
   .pin-row input { width: 7.5em; font-family: var(--mono); font-size: 22px; letter-spacing: .3em; min-height: 48px; padding: 8px 12px;
-    border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+    border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
   .pin-msg { margin: 8px 0 0; min-height: 1.2em; color: var(--warn-text); font-weight: 600; }
 
   /* report */
@@ -111,7 +115,7 @@
   @media print {
     :root, :root[data-theme="dark"], :root[data-theme="light"], :root:not([data-theme="light"]) {
       --page:#FFF; --panel:#FFF; --soft:#FFF; --subtle:#EEE; --heading:#000; --body:#222; --border:#999; --band:#FFF; --band-text:#000; --band-muted:#333;
-      --brand:#000; --brand-text:#FFF; --hi-bg:#EEE; --hi-text:#000;
+      --brand:#000; --brand-text:#FFF; --hi-bg:#EEE; --hi-text:#000; --edge:#999; --nav:#FFF; --track:#EEE;
     }
     .theme-toggle, .back, #pin-form, .noprint { display: none !important; }
     /* "Print handouts": only the handouts, one per page */
@@ -147,8 +151,8 @@
   .h-strip-text { font-size: 9.5pt; line-height: 1.35; margin: 0; text-align: left; }
   .h-check { display: flex; align-items: center; gap: 8px; min-height: 48px; }
   .h-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-  .h-row input[type=number] { width: 6em; font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
-  .h-row select { font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+  .h-row input[type=number] { width: 6em; font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+  .h-row select { font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
 </style>
 </head>
 <body>

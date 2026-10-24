@@ -7,11 +7,12 @@
 (function () {
   "use strict";
 
-  // Dark mode by default; a saved choice from the switch wins. Runs right away in <head>,
-  // before the page draws, so it doesn't flash.
+  // Follows the phone's light/dark setting (owner, 2026-10-24); a saved choice from the switch wins.
+  // Runs right away in <head>, before the page draws, so it doesn't flash.
   let t = null;
   try { t = localStorage.getItem("peds-tools-theme"); } catch (e) {}
-  document.documentElement.dataset.theme = (t === "light" || t === "dark") ? t : "dark";
+  const phoneDark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = (t === "light" || t === "dark") ? t : (phoneDark ? "dark" : "light");
 
   // PIN gates. Only SHA-256 hashes are stored here, so the PINs themselves aren't readable in
   // the page source. These are convenience gates, not security (the site is public).

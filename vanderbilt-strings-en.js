@@ -34,10 +34,9 @@
     sectionPerformance: "Performance",
     sectionSideEffects: "Side effects",
     back: "Back",
-    skip: "Answer later",
 
     reviewTitle: "Summary and submit",
-    summaryButton: "Summary and submit",
+    summaryButton: "Review Questions",
     clinicViewLink: "For clinicians: open the clinic view",
     reviewAllDone: "All {total} questions answered.",
     reviewSkipped: "{n} still to answer. Tap one to answer it.",

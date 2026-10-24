@@ -45,6 +45,10 @@
     reviewNeedAll: "Answer every question to finish ({n} left).",
     reviewSubmit: "Submit",
     reviewError: "Something went wrong. Please go back and check your answers.",
+    // one optional comment box at the end of each form (owner, 2026-10-24)
+    commentLabel: "Comments (optional)",
+    commentHint: "Anything else you'd like the doctor to know. Please don't include names. Comments travel in the link and QR code, not in the typed code.",
+    commentCount: "{n} of {max}",
 
     doneTitle: "Thank you",
     doneIntro: "Your answers are ready to send. Keep this page until they reach the parent or the clinic.",
@@ -52,6 +56,7 @@
     packetQrLabel: "QR code of all the forms for this visit",
     doneCode: "Backup code",
     doneCodeHint: "If the link doesn't work, this code can be typed in at the clinic.",
+    doneCommentNote: "Your comment is in the link and QR code only, not in the typed code.",
     doneVisit: "Visit {visit}",
     doneCopy: "Copy link",
     doneCopied: "Copied",
@@ -90,6 +95,13 @@
     clinicianLink: "Clinician? Open the report",
     shareTitle: "Scan with a phone camera, or copy the link",
     hidePanel: "Close",
+    typedNoComments: "Typed codes don't carry comments; if they wrote one, ask for the link or QR.",
+    // QR full view and size safety net (owner, 2026-10-24)
+    qrTapHint: "Tap for full view",
+    qrFullAria: "Show the QR code full screen",
+    qrClose: "Close",
+    qrLarge: "Large code: if it won't scan, tap it for full view or use Send / Copy link.",
+    qrTooLong: "Too much to fit in a QR code. Use Send or Copy link instead.",
 
     // prewritten messages
     msgTeacher: "Hello, could you fill in this short ADHD rating form about my child? It takes about 10 minutes on a phone and needs no names. {link}",

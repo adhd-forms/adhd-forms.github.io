@@ -16,6 +16,11 @@
     // joined with ", " (a part that doesn't apply is left out).
     raterLine: "{rater}: {details}.{sideEffects}{medication}",
     unreadable: "{rater}: result could not be read.",
+    // The rater's optional comment, on the line after theirs (owner, 2026-10-24). {partial} is empty, or
+    // commentPartial when characters the note can't show were left out.
+    comment: "{rater} comments: \"{comment}\"{partial}",
+    commentPartial: " (some characters left out; see the clinic view)",
+    commentUnreadable: "{rater} comments: (written in characters the note can't show; see the clinic view)",
     notReturned: "{rater}: not returned.",
 
     screenNames: {

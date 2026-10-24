@@ -236,6 +236,8 @@
     // Every question is required (owner, 2026-10-23): Submit stays off until all are answered.
     $("review-submit").disabled = left > 0;
     $("review-msg").textContent = left ? t("reviewNeedAll", { n: left }) : "";
+    $("comment").value = st.comment || "";
+    countComment();
     const ul = $("review-list");
     ul.textContent = "";
     if (setupMissing()) {
@@ -260,6 +262,25 @@
       li.append(b); ul.append(li);
     });
   }
+  // Comment (owner, 2026-10-24): one optional box at the end of the form, 200 characters at most,
+  // counted as String.length like the codes do. Line breaks and tabs become a space; other control and
+  // bidi characters (the set the codes refuse) are removed. Nothing is rewritten while an IME composes.
+  const COMMENT_MAX = 200;
+  function cleanComment(s) { return s.replace(/[\r\n\t]+/g, " ").replace(/[\u0000-\u001F\u007F-\u009F‪-‮⁦-⁩]/g, ""); }
+  // Cut to 200 without leaving half an emoji at the end.
+  function cutComment(s) { return cleanComment(s).slice(0, COMMENT_MAX).replace(/[\uD800-\uDBFF]$/, ""); }
+  function countComment() { $("comment-count").textContent = t("commentCount", { n: $("comment").value.length, max: COMMENT_MAX }); }
+  let composing = false;
+  function commentInput() {
+    const box = $("comment");
+    if (!composing) { const c = cutComment(box.value); if (c !== box.value) box.value = c; }
+    if (st) { st.comment = box.value; save(); }
+    countComment();
+  }
+  $("comment").addEventListener("compositionstart", () => { composing = true; });
+  $("comment").addEventListener("compositionend", () => { composing = false; commentInput(); });
+  $("comment").addEventListener("input", commentInput);
+
   $("review-submit").addEventListener("click", () => {
     if (leftToAnswer()) return renderReview();
     // Never show a code for answers the scoring would reject.
@@ -280,7 +301,8 @@
   });
   function resultObject() {
     return { visit: st.visit, kind: st.kind, slot: st.slot, teacherRole: st.teacherRole, timeKnown: st.timeKnown,
-      medication: st.medication, answers: st.answers, sideEffects: st.sideEffects };
+      medication: st.medication, answers: st.answers, sideEffects: st.sideEffects,
+      comment: cutComment(st.comment || "").trim() };
   }
 
   function resultBytes() { return C.encodeResult(resultObject()); }
@@ -288,8 +310,11 @@
     show("s-done");
     const bytes = resultBytes();
     $("done-visit").textContent = t("doneVisit", { visit: C.formatVisitCode(st.visit) });
-    $("done-code").textContent = C.toTyped(resultObject()); // short code when complete, long one for older drafts
+    const r = resultObject();
+    $("done-code").textContent = C.toTyped(r); // short code when complete, long one for older drafts
     $("done-link").textContent = C.toLink(bytes);
+    // Only the short code leaves the comment out (the long one for older drafts carries it).
+    $("done-comment-note").hidden = !(r.comment && C.isComplete(r));
   }
   $("done-copy").addEventListener("click", () => {
     const text = $("done-link").textContent;
@@ -324,22 +349,69 @@
   });
 
   // ---------- QR codes (vendor/qrcode-generator, error correction M, 4-module quiet zone) ----------
+  // Returns the QR version, or 0 when the text is too long for any QR code: comments can make a packet
+  // that big, and the box then says to use Send or Copy link (owner, 2026-10-24: keep 200 + safety net).
   function drawQR(box, text, label) {
-    const q = qrcode(0, "M");
-    q.addData(text); q.make();
+    box.textContent = "";
+    let q;
+    try { q = qrcode(0, "M"); q.addData(text); q.make(); }
+    catch (e) {
+      const p = document.createElement("p");
+      p.className = "qr-too-long"; p.textContent = t("qrTooLong");
+      box.append(p);
+      return 0;
+    }
     const n = q.getModuleCount(), size = n + 8, NS = "http://www.w3.org/2000/svg";
     let d = "";
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) d += "M" + (x + 4) + " " + (y + 4) + "h1v1h-1z";
     const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", "0 0 " + size + " " + size);
     svg.setAttribute("role", "img"); svg.setAttribute("aria-label", label);
+    svg.setAttribute("shape-rendering", "crispEdges");
     const bg = document.createElementNS(NS, "rect");
     bg.setAttribute("width", size); bg.setAttribute("height", size); bg.setAttribute("fill", "#FFFFFF");
     const path = document.createElementNS(NS, "path");
     path.setAttribute("d", d); path.setAttribute("fill", "#000000");
     svg.append(bg, path);
-    box.textContent = ""; box.append(svg);
+    box.append(svg);
+    return (n - 17) / 4;
   }
+
+  // The share panel's QR: tap it for full view; a big one gets a hint (owner, 2026-10-24).
+  let fullText = null, fullLabel = "";
+  function shareQR(text, label) {
+    const v = drawQR($("qr-box"), text, label);
+    fullText = v ? text : null; fullLabel = label;
+    $("qr-tap").disabled = !v;
+    if (v) $("qr-tap").setAttribute("aria-label", t("qrFullAria"));
+    else $("qr-tap").removeAttribute("aria-label"); // a screen reader then reads the "too much to fit" text
+    $("qr-tap-hint").hidden = !v;
+    $("qr-large").hidden = v < 25;
+  }
+  // Full view: one history entry with the same address, so Back closes it without reloading the draft.
+  // The screen is kept on while it shows, where the phone allows it.
+  let wakeLock = null;
+  function openFull() {
+    if (!fullText) return;
+    drawQR($("qr-full-box"), fullText, fullLabel);
+    $("qr-full").setAttribute("aria-label", fullLabel);
+    $("qr-full").hidden = false;
+    history.pushState({ qrFull: 1 }, "", location.href);
+    $("qr-close").focus();
+    if (navigator.wakeLock) navigator.wakeLock.request("screen").then(l => { if ($("qr-full").hidden) l.release(); else wakeLock = l; }, () => {});
+  }
+  function closeFull() {
+    if ($("qr-full").hidden) return;
+    $("qr-full").hidden = true;
+    $("qr-full-box").textContent = "";
+    if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+    $("qr-tap").focus();
+  }
+  function leaveFull() { if (history.state && history.state.qrFull) history.back(); else closeFull(); }
+  $("qr-tap").addEventListener("click", openFull);
+  $("qr-close").addEventListener("click", leaveFull);
+  addEventListener("keydown", e => { if (e.key === "Escape" && !$("qr-full").hidden) leaveFull(); });
+  addEventListener("popstate", closeFull);
 
   // Share sheet when the phone has one; otherwise the panel with a QR of the link and Copy.
   function shareText(text, link) {
@@ -347,7 +419,7 @@
     showPanel(text, link);
   }
   function showPanel(text, link) {
-    drawQR($("qr-box"), link, t("doneQrLabel"));
+    shareQR(link, t("doneQrLabel"));
     $("share-text").textContent = text;
     $("share-panel").hidden = false;
     $("share-panel").scrollIntoView({ block: "nearest" });
@@ -415,7 +487,7 @@
   });
   $("packet-show").addEventListener("click", () => {
     const link = packetLink(getPacket(packetVisit));
-    drawQR($("qr-box"), link, t("packetQrLabel"));
+    shareQR(link, t("packetQrLabel"));
     $("share-text").textContent = link;
     $("share-panel").hidden = false;
     $("share-panel").scrollIntoView({ block: "nearest" });
@@ -428,7 +500,7 @@
     if (d.type === "invite") return say(t("inviteNotResult"));
     const m = C.merge(getPacket(packetVisit), d.value);
     if (m.ok) { putPacket(m.packet); $("add-in").value = ""; renderPacket(); }
-    say(m.message);
+    say(m.message + (m.ok && d.short ? " " + t("typedNoComments") : ""));
   });
 
   // Scan a teacher's (or the other parent's) result QR straight into this packet (owner, 2026-10-23).

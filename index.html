@@ -135,6 +135,18 @@
   .steps { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
   input.wide { max-width: 100%; font-size: 16px; letter-spacing: .02em; text-transform: none; }
   .qr { background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
+  .qr .qr-too-long { line-height: 1.5; margin: 0; padding: 14px 16px; max-width: 320px; color: #7F1D1D; }
+  .qr-tap { display: inline-block; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
+  .qr-tap:disabled { cursor: default; }
+  textarea#comment { font: inherit; font-size: 16px; width: 100%; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--soft); color: var(--heading); resize: vertical; }
+  textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  /* Full view of a QR: white in both themes, as large as the screen allows */
+  #qr-full { position: fixed; inset: 0; z-index: 50; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
+  #qr-full[hidden] { display: none; }
+  #qr-full-box svg { display: block; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
+  #qr-close { font: inherit; font-weight: 600; font-size: 16px; min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
+  #qr-close:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }
   .qr svg { width: min(78vw, 320px); height: auto; display: block; shape-rendering: crispEdges; }
   #print-sheet { display: none; }
 
@@ -214,6 +226,11 @@
     <h2 data-t="reviewTitle"></h2>
     <p class="review-head" id="review-head"></p>
     <ul class="review-list" id="review-list"></ul>
+    <!-- One optional comment at the end of each form (owner, 2026-10-24) -->
+    <label class="field" for="comment" data-t="commentLabel"></label>
+    <p class="hint" id="comment-hint" data-t="commentHint"></p>
+    <textarea id="comment" rows="3" maxlength="200" aria-describedby="comment-hint comment-count"></textarea>
+    <p class="hint" id="comment-count" aria-live="polite"></p>
     <p class="msg" id="review-msg" role="alert"></p>
     <div class="btns"><button type="button" class="btn" id="review-submit" data-t="reviewSubmit"></button></div>
   </section>
@@ -229,6 +246,7 @@
     <p><strong data-t="doneCode"></strong></p>
     <p class="code" id="done-code"></p>
     <p class="hint" data-t="doneCodeHint"></p>
+    <p class="hint" id="done-comment-note" data-t="doneCommentNote" hidden></p>
     <div class="btns"><button type="button" class="btn secondary" id="done-copy" data-t="doneCopy"></button></div>
     <p class="link" id="done-link"></p>
   </section>
@@ -263,7 +281,10 @@
 
   <section class="card" id="share-panel" hidden>
     <h2 data-t="shareTitle"></h2>
-    <div class="qr" id="qr-box"></div>
+    <!-- Tap the code for full view (owner, 2026-10-24) -->
+    <button type="button" class="qr-tap" id="qr-tap"><span class="qr" id="qr-box"></span></button>
+    <p class="hint noprint" id="qr-tap-hint" data-t="qrTapHint"></p>
+    <p class="hint" id="qr-large" data-t="qrLarge" hidden></p>
     <p class="link" id="share-text"></p>
     <div class="btns">
       <button type="button" class="btn secondary" id="share-copy" data-t="doneCopy"></button>
@@ -274,6 +295,11 @@
   <div class="btns noprint"><button type="button" class="btn secondary" id="clear-all" data-t="clear"></button></div>
   <p class="bottom-link noprint"><a href="clinic.html" data-t="clinicViewLink"></a></p>
 </main>
+
+<div id="qr-full" class="noprint" role="dialog" aria-modal="true" hidden>
+  <div id="qr-full-box"></div>
+  <button type="button" id="qr-close" data-t="qrClose"></button>
+</div>
 
 <div id="print-sheet">
   <div class="qr" id="print-qr"></div>
@@ -297,10 +323,10 @@
 
 <script src="vanderbilt-forms.js?v=3"></script>
 <script src="vanderbilt-score.js?v=2"></script>
-<script src="vanderbilt-codes.js?v=3"></script>
+<script src="vanderbilt-codes.js?v=4"></script>
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-strings-en.js?v=5"></script>
-<script src="vanderbilt-page.js?v=6"></script>
+<script src="vanderbilt-strings-en.js?v=6"></script>
+<script src="vanderbilt-page.js?v=7"></script>
 </body>
 </html>

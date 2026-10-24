@@ -45,7 +45,8 @@
       $("add-msg").textContent = "Visit codes don't match: " + C.formatVisitCode(visit) + " vs " + C.formatVisitCode(d.value.visit) + ". Nothing was added.";
       return;
     }
-    $("add-msg").textContent = add(d);
+    // A short typed code never carries a comment (owner, 2026-10-24).
+    $("add-msg").textContent = add(d) + (d.short ? " Typed codes don't carry comments; if they wrote one, ask for the link or QR." : "");
     $("add-in").value = "";
     $("add-label").firstChild.textContent = "Add another result";
   });
@@ -84,6 +85,7 @@
       ul.append(el("li", null, "Side effects: " + (some.length ? some.map(x => x.text + " (" + x.label.toLowerCase() + ")").join("; ") : any ? "none reported" : "not answered")));
     }
     if (res.medication) ul.append(el("li", null, "Rated when the child " + res.medication.label + "."));
+    if (r.comment && r.comment.trim()) ul.append(el("li", "comment", "Comments: " + r.comment)); // as written, text only
     box.append(ul);
     return box;
   }
@@ -124,7 +126,7 @@
     $("r-visit").textContent = rep.visitShown;
     $("r-kind").textContent = rep.kind === "initial" ? "Initial" : "Follow-up";
     $("r-note").textContent = Rep.noteText(rep);
-    // Form text and scoring both still carry VERIFY until the owner checks them against the paper forms.
+    // Shown only if a VERIFY tag comes back: the owner checked the form text and scoring, 2026-10-23.
     const formVerify = rep.raters.some(r => F.FORMS[r.formId].verify);
     $("r-verify").hidden = !(formVerify || rep.verify.length);
     const raters = $("r-raters");

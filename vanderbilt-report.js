@@ -25,7 +25,8 @@
       if (!r) return;
       const formId = C.formId(slot, packet.kind);
       const result = S.score(formId, { answers: r.answers, sideEffects: r.sideEffects, medication: r.medication });
-      raters.push({ slot: slot, label: C.raterLabel(r), formId: formId, answers: r.answers, result: result, error: !result.ok });
+      raters.push({ slot: slot, label: C.raterLabel(r), formId: formId, answers: r.answers, result: result, error: !result.ok,
+        comment: typeof r.comment === "string" ? r.comment : "" });
     });
     const missing = (packet.sent || []).filter(s => !(packet.raters || {})[s]).sort((a, b) => SLOTS.indexOf(a) - SLOTS.indexOf(b));
     const verify = [...new Set(raters.map(r => S.RULES[r.formId].verify).filter(Boolean))]; // only real VERIFY tags
@@ -116,10 +117,26 @@
     return fill(T.raterLine, { rater: r.label, details: parts.filter(Boolean).join(", "), sideEffects: se, medication: med });
   }
 
+  // A rater's comment for the note (owner, 2026-10-24): accents folded first (é → e), then the same
+  // toAscii as the rest of the note. When toAscii has to delete a character (emoji, other scripts), the
+  // line says so, so a comment never shrinks or vanishes without notice. The comment is filled in last,
+  // so text in it that looks like a {placeholder} is never replaced.
+  function commentLine(r, T) {
+    const folded = r.comment.normalize("NFD").replace(/[̀-ͯ]/g, "");
+    let lost = false;
+    for (const ch of folded) if (ch > "\x7E" && toAscii(ch) === "") lost = true;
+    const text = toAscii(folded).replace(/\s+/g, " ").trim();
+    if (!text) return fill(T.commentUnreadable, { rater: r.label });
+    return fill(T.comment, { rater: r.label, partial: lost ? T.commentPartial : "", comment: text });
+  }
+
   function noteText(report, template) {
     const T = template || window.PedsVanderbiltNote;
     const lines = [fill(T.header, { form: report.kind === "initial" ? T.formInitial : T.formFollowup, visit: report.visitShown })];
-    report.raters.forEach(r => lines.push(raterLine(r, T, report.kind)));
+    report.raters.forEach(r => {
+      lines.push(raterLine(r, T, report.kind));
+      if (r.comment && r.comment.trim()) lines.push(commentLine(r, T));
+    });
     report.missing.forEach(m => lines.push(fill(T.notReturned, { rater: m.label })));
     const text = toAscii(lines.join("\n")).split("\n").map(l => l.trim()).join("\n");
     if (!/^[\x20-\x7E\n]*$/.test(text)) throw new Error("The note template contains a character Epic can't take (a control character). Fix vanderbilt-note-template.js.");

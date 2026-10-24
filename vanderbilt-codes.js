@@ -6,8 +6,9 @@
    Exposes only window.PedsVanderbiltCodes. Bump ?v= on every page that loads it when it changes.
 
    Links, QR codes and long typed codes: bytes = [header][body][CRC-16]. Header = version (high 4 bits:
-   1 or 2) + type (low 4 bits: 1 rater result, 2 packet, 3 invite). Body = one mixed-radix number,
+   1 to 3) + type (low 4 bits: 1 rater result, 2 packet, 3 invite). Body = one mixed-radix number,
    first field in the lowest digits. v2 (2026-10-23) = v1 with seven teacher roles.
+   v3 (2026-10-24) = v2 plus one comment per rater, after its answers (short typed codes never carry it).
    Short typed backup codes (2026-10-23): see SHORT below (no visit code inside, two Damm checks).
    Never change the V1, V2 or SHORT tables: old links and codes must keep decoding.
    Chart notes: .claude/chart/2026-10-22-vanderbilt-encoding.md, 2026-10-23-vanderbilt-short-codes.md. */
@@ -19,7 +20,7 @@
   // Page that opens links (the tool's own site since 2026-10-23; every link and printed QR carries it).
   const BASE = "https://adhd-forms.github.io/";
 
-  const VERSION = 2; // links, QR codes and long typed codes are written as v2; v1 still decodes
+  const VERSION = 3; // links, QR codes and long typed codes are written as v3; v1 and v2 still decode
   const TYPES = { result: 1, packet: 2, invite: 3 };
   const LINK_LETTER = { result: "r", packet: "p", invite: "i" };
 
@@ -137,6 +138,27 @@
     return v - lo + 1;
   }
 
+  // v3 comment (owner, 2026-10-24): at most 200 characters, a character being a UTF-16 code unit
+  // (String.length). Control characters and bidi controls are refused, so a comment can't reorder the
+  // clinic's lines. Stored as its UTF-8 length (radix 601: 200 units × at most 3 bytes), then each byte.
+  const COMMENT_MAX = 200;
+  const COMMENT_FORBIDDEN = /[\u0000-\u001F\u007F-\u009F‪-‮⁦-⁩]/;
+  function putComment(w, comment) {
+    const s = comment === undefined || comment === null ? "" : comment;
+    if (typeof s !== "string" || s.length > COMMENT_MAX || COMMENT_FORBIDDEN.test(s)) fail("Can't encode comment");
+    const bytes = new TextEncoder().encode(s);
+    w.put(bytes.length, COMMENT_MAX * 3 + 1, "comment length");
+    bytes.forEach(function (b) { w.put(b, 256, "comment"); });
+  }
+  function getComment(r) {
+    const len = r.get(COMMENT_MAX * 3 + 1), bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = r.get(256);
+    let s;
+    try { s = new TextDecoder("utf-8", { fatal: true }).decode(bytes); } catch (e) { fail(DAMAGED); }
+    if (s.length > COMMENT_MAX || COMMENT_FORBIDDEN.test(s)) fail(DAMAGED);
+    return s;
+  }
+
   // Rater fields and answers (no visit code, kind or slot: those come from the wrapper).
   function putRater(w, slot, kind, res) {
     const teacher = slot[0] === "T", roles = rolesFor(VERSION);
@@ -164,6 +186,7 @@
         w.put(v === null ? 0 : answerDigit(v, 0, 3, "side effect " + (i + 1)), 5, "side effect " + (i + 1));
       }
     }
+    putComment(w, res.comment); // v3
   }
   function getRater(r, visit, kind, slot, version) {
     const res = { visit: visit, kind: kind, slot: slot }, roles = rolesFor(version);
@@ -182,12 +205,15 @@
       res.sideEffects = [];
       for (let i = 0; i < V1.sideEffects; i++) { const v = r.get(5); res.sideEffects.push(v === 0 ? null : v - 1); }
     }
+    if (version >= 3) res.comment = getComment(r);
     return res;
   }
 
+  // Invites carry no rater, so v3 changed nothing in them: they stay v2, byte-identical, and an older
+  // saved copy of the page still opens a new handout.
   function wrap(type, w) {
     const body = bigToBytes(w.toBigInt());
-    const head = [(VERSION << 4) | TYPES[type]].concat(body);
+    const head = [((type === "invite" ? 2 : VERSION) << 4) | TYPES[type]].concat(body);
     const c = crc16(head);
     return head.concat([c >> 8, c & 255]);
   }
@@ -254,7 +280,8 @@
   }
   const DECODERS = {
     1: function (type, body) { return decodeLink(1, type, body); },
-    2: function (type, body) { return decodeLink(2, type, body); }
+    2: function (type, body) { return decodeLink(2, type, body); },
+    3: function (type, body) { return decodeLink(3, type, body); }
   };
 
   function decodeBytes(bytes) {
@@ -471,8 +498,10 @@
   }
 
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
-  // Same rater, same answers: compared through the encoder, so key order doesn't matter.
-  function same(a, b) { return encodeResult(a).join() === encodeResult(b).join(); }
+  // Same rater, same answers: compared through the encoder, so key order doesn't matter. The comment
+  // is left out: a typed code never carries one, and a v2 link has none.
+  function withoutComment(x) { const y = clone(x); delete y.comment; return y; }
+  function same(a, b) { return encodeResult(withoutComment(a)).join() === encodeResult(withoutComment(b)).join(); }
 
   // Adds a decoded result or packet to a packet. Returns a new packet; never changes its inputs.
   function merge(packet, item) {
@@ -494,7 +523,15 @@
         if (p.sent.indexOf(res.slot) < 0) p.sent.push(res.slot);
         messages.push(raterLabel(res) + " results added.");
       } else if (same(have, res)) {
-        messages.push(raterLabel(have) + " was already added.");
+        const had = have.comment || "", got = res.comment || "";
+        if (!had && got) {
+          have.comment = got;
+          messages.push(raterLabel(have) + ": comment added.");
+        } else if (had && got && had !== got) {
+          messages.push(raterLabel(have) + " appears twice with different comments; kept the first one.");
+        } else {
+          messages.push(raterLabel(have) + " was already added.");
+        }
       } else {
         messages.push(raterLabel(have) + " appears twice with different answers; kept the first one.");
       }

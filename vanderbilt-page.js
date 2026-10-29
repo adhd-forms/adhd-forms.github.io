@@ -1,6 +1,6 @@
 /* Pediatric Tools: the Vanderbilt form page (index.html on adhd-forms.github.io), for parents and teachers.
    One question per screen, a review screen, then the result as a typed code and a link.
-   Answers are kept only in this browser (localStorage, cleared after 90 days or with one button)
+   Answers are kept only in this browser (localStorage, cleared after 29 days or with one button)
    and in links after "#". Nothing is sent to a server. No scores are shown here.
    Chart note: .claude/chart/2026-10-22-vanderbilt-form-pages.md (notes repo). */
 (function () {
@@ -10,7 +10,7 @@
   const STR = window.PedsVanderbiltStrings || {};
   const LANG = "en";
   const STORE = "peds-tools-vanderbilt-draft";
-  const MAX_AGE = 90 * 24 * 60 * 60 * 1000; // 90 days (owner's spec)
+  const MAX_AGE = 29 * 24 * 60 * 60 * 1000; // 29 days since the last change (owner, 2026-10-29; was 90)
   const $ = id => document.getElementById(id);
 
   function t(key, vars) {
@@ -22,7 +22,7 @@
 
   // ---------- storage (every access guarded: the page works without it) ----------
   // Two stores: drafts (one per visit and rater) and packets (one per visit, on the parent's phone).
-  // savedAt is local only, for the 90-day clear; it never goes into a link.
+  // savedAt is local only, for the 29-day clear; it never goes into a link.
   const PSTORE = "peds-tools-vanderbilt-packets";
   function loadStore(key) {
     try {
@@ -583,7 +583,7 @@
     showFooter(); render();
   }
   addEventListener("hashchange", fromHash);
-  loadAll(); // runs the 90-day clear
+  loadAll(); loadStore(PSTORE); // run the 29-day clear on drafts and packets
   fromHash();
   if (window.PedsShared) window.PedsShared.init();
 })();

@@ -7,6 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>Credits: ADHD Rating Forms</title>
 <meta name="theme-color" content="#0D0D0C">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="shared.js?v=4"></script>
@@ -15,6 +16,7 @@
     --radius: 4px; --serif: Georgia, "Times New Roman", serif; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; } }
   :root[data-theme="dark"] { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--serif); }
   a { color: var(--heading); }

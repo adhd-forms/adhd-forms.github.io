@@ -11,6 +11,8 @@
 <title>ADHD Forms: Clinic</title>
 <meta name="description" content="Clinician view of NICHQ Vanderbilt ADHD rating results: merge results by visit code and copy a plain note for the chart.">
 <meta name="theme-color" content="#0D0D0C">
+<!-- The site draws its own dark mode, so phone browsers don't force theirs. -->
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!-- Own home-screen app (opens straight on this page) -->
@@ -49,6 +51,7 @@
     --hi-bg: #2E2614; --hi-text: #F2D99A; --focus: #FAF9F6;
     --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
   }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--sans); }

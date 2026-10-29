@@ -11,6 +11,8 @@
 <title>ADHD Rating Forms</title>
 <meta name="description" content="NICHQ Vanderbilt ADHD rating forms for parents and teachers, filled in on a phone.">
 <meta name="theme-color" content="#0D0D0C">
+<!-- The site draws its own dark mode, so phone browsers don't force theirs (it turned the QR's white background dark). -->
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -44,6 +46,7 @@
     --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
     --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
   }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--sans); }
@@ -132,7 +135,7 @@
   .rows .btn { min-height: 44px; padding: 8px 14px; }
   .steps { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
   input.wide { max-width: 100%; font-size: 16px; letter-spacing: .02em; text-transform: none; }
-  .qr { background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
+  .qr { forced-color-adjust: none; background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
   .qr .qr-too-long { line-height: 1.5; margin: 0; padding: 14px 16px; max-width: 320px; color: #7F1D1D; }
   .qr-tap { display: inline-block; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
   .qr-tap:disabled { cursor: default; }
@@ -142,10 +145,10 @@
   /* Full view of a QR: white in both themes, as large as the screen allows */
   #qr-full { position: fixed; inset: 0; z-index: 50; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
   #qr-full[hidden] { display: none; }
-  #qr-full-box svg { display: block; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
+  #qr-full-box img { display: block; image-rendering: pixelated; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
   #qr-close { font: inherit; font-weight: 600; font-size: 16px; min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
   #qr-close:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }
-  .qr svg { width: min(78vw, 320px); height: auto; display: block; shape-rendering: crispEdges; }
+  .qr img { width: min(78vw, 320px); height: auto; display: block; image-rendering: pixelated; }
   #print-sheet { display: none; }
 
   @media (prefers-reduced-motion: reduce) { .bar span { transition: none; } }
@@ -158,7 +161,7 @@
     /* "Print or save PDF": only the result sheet */
     body.print-result header, body.print-result main, body.print-result footer { display: none !important; }
     body.print-result #print-sheet { display: block; padding: 24px; text-align: center; color: #000; }
-    #print-sheet .qr svg { width: 70mm; margin: 0 auto; }
+    #print-sheet .qr img { width: 70mm; margin: 0 auto; }
     #print-sheet .code { font-size: 18pt; }
   }
 </style>
@@ -319,6 +322,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
 <script src="vanderbilt-strings-en.js?v=7"></script>
-<script src="vanderbilt-page.js?v=7"></script>
+<script src="vanderbilt-page.js?v=8"></script>
 </body>
 </html>

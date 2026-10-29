@@ -361,19 +361,19 @@
       box.append(p);
       return 0;
     }
-    const n = q.getModuleCount(), size = n + 8, NS = "http://www.w3.org/2000/svg";
-    let d = "";
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) d += "M" + (x + 4) + " " + (y + 4) + "h1v1h-1z";
-    const svg = document.createElementNS(NS, "svg");
-    svg.setAttribute("viewBox", "0 0 " + size + " " + size);
-    svg.setAttribute("role", "img"); svg.setAttribute("aria-label", label);
-    svg.setAttribute("shape-rendering", "crispEdges");
-    const bg = document.createElementNS(NS, "rect");
-    bg.setAttribute("width", size); bg.setAttribute("height", size); bg.setAttribute("fill", "#FFFFFF");
-    const path = document.createElementNS(NS, "path");
-    path.setAttribute("d", d); path.setAttribute("fill", "#000000");
-    svg.append(bg, path);
-    box.append(svg);
+    // A PNG, not inline SVG: a phone's forced dark mode recolours SVG fills (the white quiet zone went
+    // dark and the code stopped scanning) but leaves pictures alone (owner, 2026-10-29).
+    const n = q.getModuleCount(), size = n + 8, k = Math.max(4, Math.ceil(640 / size));
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size * k;
+    const g = canvas.getContext("2d");
+    g.fillStyle = "#FFFFFF"; g.fillRect(0, 0, size * k, size * k);
+    g.fillStyle = "#000000";
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) g.fillRect((x + 4) * k, (y + 4) * k, k, k);
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/png"); img.alt = label;
+    img.width = img.height = size * k;
+    box.append(img);
     return (n - 17) / 4;
   }
 

@@ -47,7 +47,7 @@
     reviewError: "Something went wrong. Please go back and check your answers.",
     // one optional comment box at the end of each form (owner, 2026-10-24)
     commentLabel: "Comments (optional)",
-    commentHint: "Anything else you'd like the doctor to know. Please don't include names. Comments travel in the link and QR code, not in the typed code.",
+    commentHint: "Anything else you'd like the doctor to know. Do not include names or other identifying details. Comments travel in the link and QR code, not in the typed code.",
     commentCount: "{n} of {max}",
 
     doneTitle: "Thank you",

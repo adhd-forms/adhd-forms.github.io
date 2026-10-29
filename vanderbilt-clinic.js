@@ -209,7 +209,7 @@
     "Give each teacher one of the strips below (or tap Send to teacher on your phone).",
     HANDOUT_STEPS[2]
   ];
-  const STRIP_TEXT = "Scan with your phone camera and answer the questions about this student (about 10 minutes, no names needed). When you finish, tap Send results to parent, or print the result page and give it to the parent.";
+  const STRIP_TEXT = "Scan with your phone camera and answer the questions about this student (about 10 minutes). Do not include names or other identifying details. When you finish, tap Send results to parent, or print the result page and give it to the parent.";
   function buildHandouts(kind, count, strips) {
     const box = $("handouts"), used = new Set();
     box.textContent = "";
@@ -225,7 +225,7 @@
       const ol = el("ol");
       (strips ? HANDOUT_STEPS_PAPER : HANDOUT_STEPS).forEach(s => ol.append(el("li", null, s)));
       page.append(qr, ol,
-        el("p", "h-note", "No names or birthdays are asked. Answers stay on your phone until you send them."),
+        el("p", "h-note", "No names or birthdays are asked. Do not include names or other identifying details. Answers stay on your phone until you send them."),
         el("p", "h-stub", "For the chart: visit code " + shown + " (staff, please write this in the chart)."));
       if (strips) {
         const row = el("div", "h-strips");

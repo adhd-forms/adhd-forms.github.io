@@ -65,9 +65,7 @@
   footer.band .band-inner { padding: 28px 16px 36px; font-size: 13px; }
   footer.band p { margin: 0 0 8px; color: var(--band-muted); }
   footer.band a { color: inherit; text-underline-offset: 2px; }
-  footer.band .credit { margin-top: 14px; font-size: 14px; }
-  footer.band .sprite-credit { font-size: 12px; opacity: .8; }
-  .pixel-heart { width: 1em; height: .86em; vertical-align: -.08em; margin: 0 .15em; }
+  footer.band .sprite-credit { margin-top: 14px; font-size: 12px; opacity: .8; }
   .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
   h2 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
   h3 { font-family: var(--serif); font-weight: 500; font-size: 1.2rem; color: var(--heading); margin: 0 0 6px; }
@@ -158,10 +156,9 @@
 <body>
 <header class="band">
   <div class="band-inner">
-    <a class="back" href="https://christianrada-do.github.io/peds-tools/">← Pediatric Tools</a>
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
     <h1>ADHD Forms: Clinic</h1>
-    <p class="by">By Dr. Christian Rada, DO · Clinician reference</p>
+    <p class="by">Clinician reference</p>
   </div>
 </header>
 
@@ -204,7 +201,7 @@
       <div class="top"><span class="visit-big" id="r-visit"></span><span class="kind-big" id="r-kind"></span></div>
       <div class="btns noprint"><button type="button" class="btn" id="copy-epic">Copy for Epic</button></div>
       <pre class="note" id="r-note"></pre>
-      <p class="verify" id="r-verify" hidden>Not yet checked against the paper forms by Dr. Rada: item wording and scoring rules.</p>
+      <p class="verify" id="r-verify" hidden>Not yet checked against the paper forms: item wording and scoring rules.</p>
       <div id="r-raters"></div>
       <p class="missing" id="r-missing" hidden></p>
       <details class="drill">
@@ -238,11 +235,6 @@
 <footer class="band">
   <div class="band-inner">
     <p>Questions and scoring: NICHQ Vanderbilt Assessment Scales, Copyright ©2002 American Academy of Pediatrics and National Initiative for Children’s Healthcare Quality. Adapted from the Vanderbilt Rating Scales developed by Mark L. Wolraich, MD. Side effects adapted from the Pittsburgh side effects scale, developed by William E. Pelham, Jr, PhD. These scales should not be used alone to make a diagnosis.</p>
-    <p class="credit">Made with
-      <svg class="pixel-heart" viewBox="0 0 7 6" width="14" height="12" role="img" aria-label="love" shape-rendering="crispEdges">
-        <path fill="#E5484D" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"/>
-      </svg>
-      <a href="https://claude.com/claude-code">Claude</a></p>
     <p class="sprite-credit"><a href="credits.html">Credits</a><span class="gh-link" hidden> · <a href="https://github.com/adhd-forms/adhd-forms.github.io">Source code on GitHub</a></span></p>
   </div>
 </footer>
@@ -257,6 +249,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=7"></script>
+<script src="vanderbilt-clinic.js?v=8"></script>
 </body>
 </html>

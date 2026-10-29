@@ -216,12 +216,14 @@
 
     <section class="card noprint">
       <h3>Print handouts</h3>
-      <p class="legend">One page per family, each with its own new visit code and a QR code that opens the parent's form. Staff writes the code from the handout in the chart.</p>
+      <p class="legend">One page per family, each with its own new visit code and a QR code that opens the parent's form: first-visit forms or follow-up forms. Staff writes the code from the handout in the chart.</p>
       <div class="h-row">
-        <label>Form<br><select id="h-kind"><option value="initial">First visit</option><option value="followup">Follow-up</option></select></label>
         <label>How many<br><input type="number" id="h-count" min="1" max="50" value="20"></label>
         <label class="h-check"><input type="checkbox" id="h-strips" checked> Include 2 teacher strips</label>
-        <button type="button" class="btn" id="h-print">Print handouts</button>
+      </div>
+      <div class="btns">
+        <button type="button" class="btn" id="h-print">Print first-visit handouts</button>
+        <button type="button" class="btn" id="h-print-fu">Print follow-up handouts</button>
       </div>
     </section>
 
@@ -255,6 +257,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=6"></script>
+<script src="vanderbilt-clinic.js?v=7"></script>
 </body>
 </html>

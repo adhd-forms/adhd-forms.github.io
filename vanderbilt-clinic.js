@@ -244,13 +244,15 @@
       box.append(page);
     });
   }
-  $("h-print").addEventListener("click", () => {
+  function printHandouts(kind) {
     const n = Math.max(1, Math.min(50, Math.round(Number($("h-count").value)) || 1));
     $("h-count").value = n;
-    buildHandouts($("h-kind").value === "followup" ? "followup" : "initial", n, $("h-strips").checked);
+    buildHandouts(kind, n, $("h-strips").checked);
     document.body.classList.add("print-handouts");
     window.print();
-  });
+  }
+  $("h-print").addEventListener("click", () => printHandouts("initial"));
+  $("h-print-fu").addEventListener("click", () => printHandouts("followup"));
   addEventListener("afterprint", () => {
     document.body.classList.remove("print-handouts");
     $("handouts").textContent = ""; // the codes are never kept

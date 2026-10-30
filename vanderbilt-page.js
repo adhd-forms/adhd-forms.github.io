@@ -582,6 +582,15 @@
     }
     showFooter(); render();
   }
+  // Page-load intro (index.html, CSS-run): a tap or any key skips it; removed once it has faded.
+  const intro = $("intro");
+  if (intro) {
+    const endIntro = () => { intro.remove(); removeEventListener("keydown", endIntro); };
+    intro.addEventListener("animationend", e => { if (e.target === intro) endIntro(); });
+    intro.addEventListener("click", endIntro);
+    addEventListener("keydown", endIntro);
+  }
+
   addEventListener("hashchange", fromHash);
   loadAll(); loadStore(PSTORE); // run the 29-day clear on drafts and packets
   fromHash();

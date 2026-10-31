@@ -1,7 +1,8 @@
 /* Pediatric Tools: the Vanderbilt form page (index.html on adhd-forms.github.io), for parents and teachers.
    One question per screen, a review screen, then the result as a typed code and a link.
    Answers are kept only in this browser (localStorage, cleared after 29 days or with one button)
-   and in links after "#". Nothing is sent to a server. No scores are shown here.
+   and in links after "#". Answers are never sent to a server. No scores are shown here.
+   After a parent's form, the separate ADHD QI Project rating (vanderbilt-rating.js) sends only its own three answers.
    Chart note: .claude/chart/2026-10-22-vanderbilt-form-pages.md (notes repo). */
 (function () {
   "use strict";
@@ -96,7 +97,7 @@
   function show(id) {
     // Leaving the packet screen turns the camera off (discharge check, case 9).
     if (id !== "s-packet" && window.PedsVanderbiltParentScan) window.PedsVanderbiltParentScan.stop();
-    ["s-start", "s-setup", "s-question", "s-review", "s-done", "s-packet"].forEach(s => { $(s).hidden = s !== id; });
+    ["s-start", "s-setup", "s-question", "s-review", "s-rating", "s-done", "s-packet"].forEach(s => { $(s).hidden = s !== id; });
     $("share-panel").hidden = true;
     $("result-box").hidden = true;
   }
@@ -104,6 +105,8 @@
     if (packetVisit) return renderPacket();
     if (!st) return renderStart();
     if (st.submitted) {
+      // A parent's rating not given yet (closed or reloaded on that screen): ask it once more.
+      if (st.rating === "due") return askRating(render);
       // A parent's finished form on the phone that holds the packet: show the packet.
       const p = st.slot[0] === "P" && getPacket(st.visit);
       if (p && p.raters[st.slot]) return openPacket(st.visit);
@@ -287,18 +290,36 @@
     const sc = S.score(C.formId(st.slot, st.kind), { answers: st.answers, sideEffects: st.sideEffects, medication: st.medication });
     if (!sc.ok) { $("review-msg").textContent = t("reviewError"); return; }
     $("review-msg").textContent = "";
-    st.submitted = true; save();
+    st.submitted = true;
+    // ADHD QI Project (owner, 2026-10-31): parent forms only, one rating per finished form. Drafts
+    // submitted before this have no `rating` and are never asked. It stays out of links and codes.
+    if (st.slot[0] === "P") st.rating = "due";
+    save();
+    let next = render;
     // A parent on the phone that holds the packet: add the result to it. Parent 1 starts the packet;
     // a second parent on their own phone (no packet here) gets the done screen to send it back.
     if (st.slot[0] === "P" && (st.slot === "P1" || getPacket(st.visit))) {
       // A paper handout's parent QR: both teachers got a strip, so the packet expects them.
       const p = getPacket(st.visit) || { visit: st.visit, kind: st.kind, sent: st.paper ? ["T1", "T2"] : [], raters: {} };
       const m = C.merge(p, resultObject());
-      if (m.ok) { putPacket(m.packet); return openPacket(st.visit, m.message); }
-      $("top-msg").textContent = m.message;
+      const visit = st.visit;
+      if (m.ok) { putPacket(m.packet); next = () => openPacket(visit, m.message); }
+      else next = () => { $("top-msg").textContent = m.message; render(); };
     }
-    render();
+    // The packet is already saved above; the rating only comes before the screen that follows.
+    if (st.rating === "due") return askRating(next);
+    next();
   });
+  // The rating never holds up the form: if its script is missing or fails, go straight on.
+  function askRating(next) {
+    const form = st, R = window.PedsVanderbiltRating;
+    const go = () => {
+      if (st !== form || form.rating !== "due") return; // cleared or already moved on
+      form.rating = "done"; save(); next();
+    };
+    if (!R || !R.ready) return go();
+    try { show("s-rating"); R.start(go); } catch (e) { go(); }
+  }
   function resultObject() {
     return { visit: st.visit, kind: st.kind, slot: st.slot, teacherRole: st.teacherRole, timeKnown: st.timeKnown,
       medication: st.medication, answers: st.answers, sideEffects: st.sideEffects,

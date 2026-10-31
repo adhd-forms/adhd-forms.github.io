@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Privacy (owner's spec): answers live only in the page and in links after "#". No third-party
-     scripts or fonts, no inline scripts, no referrer. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+     scripts or fonts, no inline scripts, no referrer. The one outside address is the ADHD QI Project
+     rating (Google Apps Script, owner 2026-10-31), which gets only its own three answers. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <title>ADHD Rating Forms</title>
@@ -120,6 +121,18 @@
   .review-list .skipped .a { color: var(--warn-text); }
   .review-head { margin: 4px 0 0; }
   .review-head.warn { color: var(--warn-text); }
+
+  /* ADHD QI Project rating: 1-5 buttons, labels under 1, 3 and 5 */
+  .scale { margin-top: 22px; }
+  .scale-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .scale-row input { position: absolute; opacity: 0; pointer-events: none; }
+  .scale-row label { display: flex; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); color: var(--heading); font-family: var(--mono); font-size: 20px; cursor: pointer; }
+  .scale-row input:checked + label { background: var(--brand); color: var(--brand-text); border-color: var(--brand); }
+  .scale-ends { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 14px; line-height: 1.3; }
+  .scale-ends span { flex: 1; }
+  .scale-ends span:nth-child(2) { text-align: center; }
+  .scale-ends span:last-child { text-align: right; }
 
   /* done */
   .code { font-family: var(--mono); font-size: clamp(1.15rem, 5.4vw, 1.6rem); letter-spacing: .04em; color: var(--heading); overflow-wrap: anywhere;
@@ -265,6 +278,31 @@
     <div class="btns"><button type="button" class="btn" id="review-submit" data-t="reviewSubmit"></button></div>
   </section>
 
+  <!-- ADHD QI Project (owner, 2026-10-31): parents only, after Submit and before the packet or done screen.
+       vanderbilt-rating.js sends only these three answers. -->
+  <section class="card" id="s-rating" hidden>
+    <h2 data-t="rateTitle"></h2>
+    <p data-t="rateIntro"></p>
+    <fieldset class="choices">
+      <legend data-t="rateQ1"></legend>
+      <input type="radio" name="rate-paper" id="rate-paper-yes"><label for="rate-paper-yes" data-t="rateYes"></label>
+      <input type="radio" name="rate-paper" id="rate-paper-no"><label for="rate-paper-no" data-t="rateNo"></label>
+    </fieldset>
+    <div id="rate-more" hidden>
+      <fieldset class="scale">
+        <legend data-t="rateQ2"></legend>
+        <div class="scale-row" id="rate-easier-row"></div>
+        <div class="scale-ends" aria-hidden="true"><span id="rate-easier-row-end1" data-t="rateHarder"></span><span id="rate-easier-row-end3" data-t="rateSame"></span><span id="rate-easier-row-end5" data-t="rateEasier"></span></div>
+      </fieldset>
+      <fieldset class="scale">
+        <legend data-t="rateQ3"></legend>
+        <div class="scale-row" id="rate-faster-row"></div>
+        <div class="scale-ends" aria-hidden="true"><span id="rate-faster-row-end1" data-t="rateSlower"></span><span id="rate-faster-row-end3" data-t="rateSame"></span><span id="rate-faster-row-end5" data-t="rateFaster"></span></div>
+      </fieldset>
+    </div>
+    <div class="btns"><button type="button" class="btn" id="rate-send" data-t="rateSend" hidden></button></div>
+  </section>
+
   <section class="card" id="s-done" hidden>
     <h2 data-t="doneTitle"></h2>
     <p data-t="doneIntro"></p>
@@ -351,7 +389,8 @@
 <script src="vanderbilt-codes.js?v=4"></script>
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-strings-en.js?v=7"></script>
-<script src="vanderbilt-page.js?v=10"></script>
+<script src="vanderbilt-strings-en.js?v=8"></script>
+<script src="vanderbilt-rating.js?v=1"></script>
+<script src="vanderbilt-page.js?v=11"></script>
 </body>
 </html>

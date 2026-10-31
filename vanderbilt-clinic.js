@@ -253,6 +253,26 @@
   }
   $("h-print").addEventListener("click", () => printHandouts("initial"));
   $("h-print-fu").addEventListener("click", () => printHandouts("followup"));
+
+  // ADHD QI Project (owner, 2026-10-31): one page with the parent feedback QR. No visit code, nothing
+  // from the form: the same printout serves every family.
+  const FEEDBACK_URL = C.BASE + "feedback.html";
+  $("fb-print").addEventListener("click", () => {
+    const box = $("handouts"), page = el("section", "handout fb"), qr = el("div", "h-qr");
+    box.textContent = "";
+    qr.append(qrSvg(FEEDBACK_URL, "QR code for the parent feedback page"));
+    const ol = el("ol");
+    ["Scan the code with your phone camera.",
+      "Answer 1 to 3 quick questions about the website (under a minute).",
+      "Tap Send. That's it."].forEach(s => ol.append(el("li", null, s)));
+    page.append(el("h2", null, "Parents: how was the online ADHD form?"),
+      el("p", "h-kind", "For parents and caregivers who filled out the ADHD rating form on their phone. Teachers do not need to fill this out."),
+      qr, el("p", "h-url", FEEDBACK_URL.replace(/^https:\/\//, "")), ol,
+      el("p", "h-note", "Anonymous: no names and no answers from your child's form are collected. Thank you for helping us improve it."));
+    box.append(page);
+    document.body.classList.add("print-handouts");
+    window.print();
+  });
   addEventListener("afterprint", () => {
     document.body.classList.remove("print-handouts");
     $("handouts").textContent = ""; // the codes are never kept

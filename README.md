@@ -6,7 +6,7 @@ This is a project that integrates the NICHQ Vanderbilt ADHD rating forms for par
 - `index.html`: is the form page for parents and teachers.
 - `clinic.html`: is the clinic view (hidden behind a PIN).
 - This process does not require a server, accounts, or analytics. The answers travel only inside links after `#` (never sent to a server). Any QR code or typed codes will stay in the browser's local storage on the parent's phone (cleared after 29 days or by pressing a button on the page).
-- ADHD QI Project: after a parent finishes a form, `vanderbilt-rating.js` asks three anonymous questions about the website (used the paper form before? easier? faster?) and sends only those answers to a Google Sheet. It never sends form answers, scores, codes or names.
+- `feedback.html` (ADHD QI Project): a separate parent-only page, opened from a QR code the clinic page prints. It asks three anonymous questions about the website (used the paper form before? easier? faster?) and sends only those answers to a Google Sheet. It never reads or sends form answers, scores, codes or names; the forms themselves still send nothing.
 
 ## Backup codes
 

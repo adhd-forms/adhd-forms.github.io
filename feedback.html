@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ADHD QI Project (owner, 2026-10-31): parent feedback on the website, reached by the QR the clinic
+     prints. Separate from the forms: it never reads or sends form answers. feedback.js sends only its
+     own three answers to the owner's Google Sheet (Apps Script, which redirects to googleusercontent). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Parent Feedback: ADHD Rating Forms</title>
+<meta name="description" content="Three anonymous questions for parents about the ADHD rating form website.">
+<meta name="theme-color" content="#0D0D0C">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="shared.js?v=4"></script>
+<style>
+  /* Same tokens as index.html. System fonts only (no web fonts on this site). */
+  :root {
+    --page: #F4F4F5; --panel: #FFFFFF; --soft: #FAFAFA;
+    --brand: #232323; --brand-text: #FFFFFF;
+    --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --heading: #18181B; --body: #52525B; --border: #E4E4E7;
+    --warn-text: #7F1D1D;
+    --edge: #8A8A93; --focus: #161616; --radius: 4px;
+    --serif: Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+      --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+      --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+    --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+    --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C;
+  }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--serif); }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 64px 16px 32px; position: relative; }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band .by { margin: 0; color: var(--band-muted); }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: 13px; }
+  footer.band p { margin: 0; color: var(--band-muted); }
+  footer.band a { color: inherit; text-underline-offset: 2px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .btn { font: inherit; font-weight: 600; font-size: 16px; border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+    background: var(--brand); color: var(--brand-text); cursor: pointer; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  button:focus-visible, a:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  fieldset { border: 0; padding: 0; margin: 18px 0 0; } legend { color: var(--heading); margin-bottom: 8px; padding: 0; }
+  /* Yes / No: the setup pills of the form page */
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+  .choices input, .scale-row input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label { display: flex; align-items: center; min-height: 52px; padding: 10px 14px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); cursor: pointer; color: var(--heading); font-size: 18px; }
+  /* 1-5: large tap targets, labels under 1, 3 and 5 */
+  .scale { margin-top: 24px; }
+  .scale-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .scale-row label { display: flex; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); color: var(--heading); font-family: var(--mono); font-size: 20px; cursor: pointer; }
+  .choices input:checked + label, .scale-row input:checked + label { background: var(--brand); color: var(--brand-text); border-color: var(--brand); }
+  .scale-ends { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 14px; line-height: 1.3; }
+  .scale-ends span { flex: 1; }
+  .scale-ends span:nth-child(2) { text-align: center; }
+  .scale-ends span:last-child { text-align: right; }
+  .note { font-size: 14.5px; }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>Parent feedback</h1>
+    <p class="by">ADHD Rating Forms</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card" id="fb-form">
+    <h2>Quick feedback</h2>
+    <p>For parents and caregivers who filled out the ADHD rating form on this website. Teachers do not need to fill this out.</p>
+    <p class="note">Anonymous and separate from your child's form: no names and no answers from the form are collected.</p>
+    <fieldset class="choices">
+      <legend>Have you filled out a paper version of this form before?</legend>
+      <input type="radio" name="fb-paper" id="fb-paper-yes"><label for="fb-paper-yes">Yes</label>
+      <input type="radio" name="fb-paper" id="fb-paper-no"><label for="fb-paper-no">No</label>
+    </fieldset>
+    <div id="fb-more" hidden>
+      <fieldset class="scale">
+        <legend>Compared to the paper form, this website was easier to fill out.</legend>
+        <div class="scale-row" id="fb-easier"></div>
+        <div class="scale-ends" aria-hidden="true"><span id="fb-easier-end1">Much harder</span><span id="fb-easier-end3">About the same</span><span id="fb-easier-end5">Much easier</span></div>
+      </fieldset>
+      <fieldset class="scale">
+        <legend>Compared to the paper form, this website was faster to fill out.</legend>
+        <div class="scale-row" id="fb-faster"></div>
+        <div class="scale-ends" aria-hidden="true"><span id="fb-faster-end1">Much slower</span><span id="fb-faster-end3">About the same</span><span id="fb-faster-end5">Much faster</span></div>
+      </fieldset>
+      <div class="btns"><button type="button" class="btn" id="fb-send" disabled>Send</button></div>
+    </div>
+  </section>
+
+  <section class="card" id="fb-thanks" hidden tabindex="-1">
+    <h2>Thank you</h2>
+    <p>Your answers were sent. You can close this page.</p>
+  </section>
+
+  <section class="card" id="fb-closed" hidden>
+    <h2>Not open yet</h2>
+    <p>This feedback form isn't taking answers yet. Thank you for checking.</p>
+  </section>
+</main>
+
+<footer class="band">
+  <div class="band-inner">
+    <p><a href="credits.html">Credits</a></p>
+  </div>
+</footer>
+
+<script src="feedback.js?v=1"></script>
+</body>
+</html>

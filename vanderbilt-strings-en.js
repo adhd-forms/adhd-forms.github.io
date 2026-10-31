@@ -50,21 +50,6 @@
     commentHint: "Anything else you'd like the doctor to know. Do not include names or other identifying details. Comments travel in the link and QR code, not in the typed code.",
     commentCount: "{n} of {max}",
 
-    // ADHD QI Project rating, parents only (owner, 2026-10-31; questions and labels word for word)
-    rateTitle: "Quick feedback",
-    rateIntro: "Help us improve this website. This is anonymous and separate from your child's form.",
-    rateQ1: "Have you filled out a paper version of this form before?",
-    rateYes: "Yes",
-    rateNo: "No",
-    rateQ2: "Compared to the paper form, this website was easier to fill out.",
-    rateQ3: "Compared to the paper form, this website was faster to fill out.",
-    rateHarder: "Much harder",
-    rateEasier: "Much easier",
-    rateSlower: "Much slower",
-    rateFaster: "Much faster",
-    rateSame: "About the same",
-    rateSend: "Send",
-
     doneTitle: "Thank you",
     doneIntro: "Your answers are ready to send. Keep this page until they reach the parent or the clinic.",
     doneQrLabel: "QR code of the results link",

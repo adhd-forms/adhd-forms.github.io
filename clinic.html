@@ -150,6 +150,14 @@
   .h-qr-small svg { width: 36mm; height: 36mm; display: block; margin: 0 auto 2mm; }
   .h-strip-code { font-family: var(--mono); font-size: 13pt; margin: 0 0 2mm; color: #000; }
   .h-strip-text { font-size: 9.5pt; line-height: 1.35; margin: 0; text-align: left; }
+  /* parent feedback sheet (ADHD QI Project) */
+  .handout .h-url { font-family: var(--mono); font-size: 13pt; color: #000; margin: 0 0 6mm; }
+  .handout.fb { padding-top: 16mm; }
+  .handout.fb h2 { font-size: 28pt; margin-bottom: 6mm; }
+  .handout.fb .h-kind { font-size: 15pt; max-width: 160mm; margin: 0 auto 8mm; }
+  .handout.fb .h-qr svg { width: 105mm; height: 105mm; }
+  .handout.fb ol { font-size: 15pt; line-height: 1.6; max-width: 130mm; margin-bottom: 8mm; }
+  .handout.fb .h-note { font-size: 12pt; }
   .h-check { display: flex; align-items: center; gap: 8px; min-height: 48px; }
   .h-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
   .h-row input[type=number] { width: 6em; font: inherit; min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
@@ -227,6 +235,13 @@
       </div>
     </section>
 
+    <!-- ADHD QI Project (owner, 2026-10-31): one page with the parent feedback QR, for rooms or to hand out -->
+    <section class="card noprint">
+      <h3>Print parent feedback QR</h3>
+      <p class="legend">ADHD QI Project. One page with a QR code that opens the parent feedback page (3 anonymous questions about this website). For parents only, not teachers. It has no visit code, so one printout can be used again and again.</p>
+      <div class="btns"><button type="button" class="btn" id="fb-print">Print feedback QR</button></div>
+    </section>
+
     <div class="btns noprint">
       <button type="button" class="btn secondary" id="clear">Clear from this device</button>
       <button type="button" class="btn secondary" id="lock-btn">Lock clinician section</button>
@@ -252,6 +267,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=8"></script>
+<script src="vanderbilt-clinic.js?v=9"></script>
 </body>
 </html>

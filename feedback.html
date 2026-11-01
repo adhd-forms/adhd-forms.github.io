@@ -15,7 +15,7 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="shared.js?v=4"></script>
+<script src="shared.js?v=5"></script>
 <style>
   /* Same tokens as index.html. System fonts only (no web fonts on this site). */
   :root {
@@ -24,7 +24,7 @@
     --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
     --heading: #18181B; --body: #52525B; --border: #E4E4E7;
     --warn-text: #7F1D1D;
-    --edge: #8A8A93; --focus: #161616; --radius: 4px;
+    --edge: #8A8A93; --subtle: #F2F2F2; --dis-text: #6B6B73; --focus: #161616; --radius: 4px;
     --serif: Georgia, "Times New Roman", serif;
     --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
@@ -32,34 +32,34 @@
     :root:not([data-theme="light"]) {
       --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
       --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
-      --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C;
+      --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C; --subtle: #2C2B27; --dis-text: #9A968C;
     }
   }
   :root[data-theme="dark"] {
     --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
     --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
-    --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C;
+    --border: #3A3833; --warn-text: #F3CFC6; --focus: #FAF9F6; --edge: #7A766C; --subtle: #2C2B27; --dis-text: #9A968C;
   }
   :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--serif); }
+  body { margin: 0; background: var(--page); color: var(--body); font: calc(16px * var(--tb, 1))/1.55 var(--serif); }
   a { color: var(--heading); }
   .band { background: var(--band); color: var(--band-text); }
   .band-inner { max-width: 900px; margin: 0 auto; padding: 64px 16px 32px; position: relative; }
-  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: calc(clamp(1.9rem, 6vw, 2.6rem) * var(--tb, 1)); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
   .band .by { margin: 0; color: var(--band-muted); }
-  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-family: var(--mono); font-size: 12px; font-weight: 500;
-    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
-  footer.band .band-inner { padding: 28px 16px 36px; font-size: 13px; }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-size: calc(12px * var(--ts, 1)); font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; font-family: var(--small-font); }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: calc(13px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
   footer.band p { margin: 0; color: var(--band-muted); }
   footer.band a { color: inherit; text-underline-offset: 2px; }
   .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
-  h2 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: calc(1.5rem * var(--tb, 1)); color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
   .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-  .btn { font: inherit; font-weight: 600; font-size: 16px; border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+  .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:disabled { background: var(--subtle); color: var(--dis-text); border-color: var(--edge); cursor: not-allowed; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
   button:focus-visible, a:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
   [hidden] { display: none !important; }
@@ -68,18 +68,18 @@
   .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
   .choices input, .scale-row input { position: absolute; opacity: 0; pointer-events: none; }
   .choices label { display: flex; align-items: center; min-height: 52px; padding: 10px 14px; border: 1px solid var(--edge); border-radius: var(--radius);
-    background: var(--panel); cursor: pointer; color: var(--heading); font-size: 18px; }
+    background: var(--panel); cursor: pointer; color: var(--heading); font-size: calc(18px * var(--tb, 1)); }
   /* 1-5: large tap targets, labels under 1, 3 and 5 */
   .scale { margin-top: 24px; }
   .scale-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .scale-row label { display: flex; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--edge); border-radius: var(--radius);
-    background: var(--panel); color: var(--heading); font-family: var(--mono); font-size: 20px; cursor: pointer; }
+    background: var(--panel); color: var(--heading); font-family: var(--mono); font-size: calc(20px * var(--tb, 1)); cursor: pointer; }
   .choices input:checked + label, .scale-row input:checked + label { background: var(--brand); color: var(--brand-text); border-color: var(--brand); }
-  .scale-ends { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 14px; line-height: 1.3; }
+  .scale-ends { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: calc(14px * var(--tb, 1)); line-height: 1.3; }
   .scale-ends span { flex: 1; }
   .scale-ends span:nth-child(2) { text-align: center; }
   .scale-ends span:last-child { text-align: right; }
-  .note { font-size: 14.5px; }
+  .note { font-size: calc(14.5px * var(--tb, 1)); }
 </style>
 </head>
 <body>

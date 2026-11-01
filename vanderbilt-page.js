@@ -97,9 +97,20 @@
     // Leaving the packet screen turns the camera off (discharge check, case 9).
     if (id !== "s-packet" && window.PedsVanderbiltParentScan) window.PedsVanderbiltParentScan.stop();
     ["s-start", "s-setup", "s-question", "s-review", "s-done", "s-packet"].forEach(s => { $(s).hidden = s !== id; });
+    $("home-btn").hidden = !(id === "s-question" || id === "s-review" || ((id === "s-setup" || id === "s-done") && homePacket()));
     $("share-panel").hidden = true;
     $("result-box").hidden = true;
   }
+  // Home (owner, 2026-11-01; replaces the setup screen's "Back to your child's forms"): the packet when this
+  // phone holds one for the visit, otherwise the form's first screen. Hidden where it would lead to the same screen.
+  function homePacket() { return st && st.slot[0] === "P" && getPacket(st.visit) ? st.visit : null; }
+  $("home-btn").addEventListener("click", () => {
+    clearTimeout(advance);
+    returnToReview = false;
+    const v = homePacket();
+    if (v) { st = null; return openPacket(v); }
+    st.step = "setup"; save(); render();
+  });
   function render() {
     if (packetVisit) return renderPacket();
     if (!st) return renderStart();
@@ -154,10 +165,7 @@
     }
     $("med-legend").textContent = t("setupMedQuestion", { lead: F.MEDICATION_QUESTION });
     pills($("med-pick"), "med", F.MEDICATION, st.medication, v => { st.medication = v; save(); });
-    // A parent on the phone that holds this visit's packet can go back to it (owner, 2026-10-22).
-    $("setup-back").hidden = !(st.slot[0] === "P" && getPacket(st.visit));
   }
-  $("setup-back").addEventListener("click", () => { const v = st.visit; st = null; openPacket(v); });
   $("setup-go").addEventListener("click", () => {
     if (st.slot[0] === "T" && (!st.teacherRole || !st.timeKnown)) { $("setup-msg").textContent = t("setupNeedTeacher"); return; }
     if (!st.medication) { $("setup-msg").textContent = t("setupNeedMed"); return; }
@@ -202,14 +210,15 @@
     $("qtext").focus();
   }
   // Keeps the answer buttons in one place: the question area has a fixed height, and a long question
-  // gets a smaller font (down to 1 rem) until it fits (owner, 2026-10-23).
+  // gets a smaller font (down to 1 rem) until it fits (owner, 2026-10-23). Both follow the text-size setting.
   function fitQuestion() {
     const head = $("qhead"), q = $("qtext");
+    const set = size => { q.style.fontSize = "calc(" + size + "rem * var(--tb, 1))"; };
     let size = 1.45;
-    q.style.fontSize = size + "rem";
-    while (head.scrollHeight > head.clientHeight + 1 && size > 1.0) { size = Math.round((size - 0.05) * 100) / 100; q.style.fontSize = size + "rem"; }
+    set(size);
+    while (head.scrollHeight > head.clientHeight + 1 && size > 1.0) { size = Math.round((size - 0.05) * 100) / 100; set(size); }
   }
-  addEventListener("resize", () => { if (!$("s-question").hidden) fitQuestion(); });
+  ["resize", "peds-text-size"].forEach(ev => addEventListener(ev, () => { if (!$("s-question").hidden) fitQuestion(); }));
   $("q-summary").addEventListener("click", () => { clearTimeout(advance); returnToReview = false; st.step = "review"; save(); render(); });
   function next(i) {
     if (returnToReview || i + 1 >= steps().length) { returnToReview = false; st.step = "review"; }

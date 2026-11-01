@@ -27,7 +27,7 @@
     setupMedQuestion: "{lead} …?",
     setupNeedMed: "Please answer the medication question.",
     setupStart: "Start",
-    backToPacket: "Back to your child's forms",
+    home: "Home",
 
     progress: "Question {n} of {total}",
     sectionSymptoms: "Symptoms",

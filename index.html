@@ -16,7 +16,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="shared.js?v=4"></script>
+<script src="shared.js?v=5"></script>
 <style>
   /* Same tokens as Pediatric Tools. System fonts only (no web fonts on this site). */
   :root {
@@ -26,7 +26,7 @@
     --heading: #18181B; --body: #52525B; --border: #E4E4E7; --subtle: #F2F2F2;
     --warn-bg: #FEF2F2; --warn-border: #FCA5A5; --warn-text: #7F1D1D;
     /* control edges at 3:1 or more against the card; grey fill for Back / Review Questions (owner, 2026-10-24) */
-    --edge: #8A8A93; --nav: #E4E4E7; --track: #D4D4D8;
+    --edge: #8A8A93; --nav: #E4E4E7; --track: #8A8A93; --dis-text: #6B6B73;
     --focus: #161616; --radius: 4px;
     --serif: Georgia, "Times New Roman", serif;
     --sans: Georgia, "Times New Roman", serif;
@@ -37,49 +37,49 @@
       --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
       --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
       --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
-      --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
+      --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
     }
   }
   :root[data-theme="dark"] {
     --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
     --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
     --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
-    --edge: #7A766C; --nav: #3A3833; --track: #4A4740;
+    --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
   }
   :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--page); color: var(--body); font: 16px/1.55 var(--sans); }
+  body { margin: 0; background: var(--page); color: var(--body); font: calc(16px * var(--tb, 1))/1.55 var(--sans); }
   strong, b { color: var(--heading); font-weight: 600; }
   a { color: var(--heading); }
   .band { background: var(--band); color: var(--band-text); }
   .band-inner { max-width: 900px; margin: 0 auto; padding: 40px 16px 32px; position: relative; }
   header.band .band-inner { padding-top: 64px; }
-  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: calc(clamp(1.9rem, 6vw, 2.6rem) * var(--tb, 1)); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
   .band .by { margin: 0; color: var(--band-muted); }
-  .back { position: absolute; top: 18px; left: 16px; color: var(--band-muted); font-size: 14px; }
-  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-family: var(--mono); font-size: 12px; font-weight: 500;
-    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
-  footer.band .band-inner { padding: 28px 16px 36px; font-size: 13px; }
+  .back { position: absolute; top: 18px; left: 16px; color: var(--band-muted); font-size: calc(14px * var(--tb, 1)); }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-size: calc(12px * var(--ts, 1)); font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; font-family: var(--small-font); }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: calc(13px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
   footer.band p { margin: 0 0 8px; color: var(--band-muted); }
   footer.band a { color: inherit; text-underline-offset: 2px; }
-  footer.band .sprite-credit { margin-top: 14px; font-size: 12px; opacity: .8; }
+  footer.band .sprite-credit { margin-top: 14px; font-size: calc(12px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
 
   .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
-  h2 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: calc(1.5rem * var(--tb, 1)); color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
   .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-  .btn { font: inherit; font-weight: 600; font-size: 16px; border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+  .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
   .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:disabled { background: var(--subtle); color: var(--dis-text); border-color: var(--edge); cursor: not-allowed; }
   #p-scan-video { display: block; width: 100%; max-width: 420px; margin-top: 12px; border-radius: var(--radius); background: #000; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   button:focus-visible, a:focus-visible, input:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
-  .hint { font-size: 14.5px; margin: 6px 0 0; }
+  .hint { font-size: calc(14.5px * var(--tb, 1)); margin: 6px 0 0; }
   .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
   [hidden] { display: none !important; }
   label.field { display: block; margin: 14px 0 6px; color: var(--heading); }
-  input[type=text] { font: inherit; font-family: var(--mono); font-size: 20px; letter-spacing: .08em; text-transform: uppercase; width: 100%; max-width: 280px;
+  input[type=text] { font: inherit; font-family: var(--mono); font-size: calc(20px * var(--tb, 1)); letter-spacing: .08em; text-transform: uppercase; width: 100%; max-width: 280px;
     min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
 
   /* choice pills (radio inputs styled as buttons) */
@@ -93,15 +93,15 @@
   /* one question per screen */
   .bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
   .bar span { display: block; height: 100%; background: var(--brand); width: 0; transition: width .2s; }
-  .progress { font-family: var(--mono); font-size: 13px; margin: 8px 0 0; }
-  .section-line { font-size: 14.5px; margin: 14px 0 4px; }
-  .qtext { font-family: var(--serif); font-size: 1.45rem; line-height: 1.3; color: var(--heading); margin: 6px 0 0; }
-  .qhead { height: 12rem; overflow: hidden; margin-bottom: 14px; }
+  .progress { font-size: calc(13px * var(--ts, 1)); margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
+  .section-line { font-size: calc(14.5px * var(--tb, 1)); margin: 14px 0 4px; }
+  .qtext { font-family: var(--serif); font-size: calc(1.45rem * var(--tb, 1)); line-height: 1.3; color: var(--heading); margin: 6px 0 0; }
+  .qhead { height: calc(12rem * var(--tb, 1)); overflow: hidden; margin-bottom: 14px; }
   .wide-btn { width: 100%; }
-  .bottom-link { margin: 14px 0 0; font-size: 14.5px; }
+  .bottom-link { margin: 14px 0 0; font-size: calc(14.5px * var(--tb, 1)); }
   .qtext:focus { outline: none; }
   .answers { display: grid; gap: 10px; }
-  .answers button { font: inherit; font-size: 18px; text-align: left; min-height: 56px; padding: 12px 16px; border: 1px solid var(--edge); border-radius: var(--radius);
+  .answers button { font: inherit; font-size: calc(18px * var(--tb, 1)); text-align: left; min-height: 56px; padding: 12px 16px; border: 1px solid var(--edge); border-radius: var(--radius);
     background: var(--panel); color: var(--heading); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   /* Selected answer: thick outline and a check mark, not a filled block (owner, 2026-10-24). The 3px border takes 2px of padding, so nothing moves. */
   .answers button.picked { border: 3px solid var(--brand); padding: 10px 14px; font-weight: 600; }
@@ -114,7 +114,7 @@
   .review-list { list-style: none; margin: 12px 0 0; padding: 0; }
   .review-list button { font: inherit; width: 100%; text-align: left; display: grid; grid-template-columns: 2.4em 1fr; gap: 4px 8px; padding: 10px 8px; min-height: 48px;
     background: transparent; border: 0; border-bottom: 1px solid var(--border); color: var(--body); cursor: pointer; }
-  .review-list .n { font-family: var(--mono); font-size: 13px; color: var(--heading); padding-top: 2px; }
+  .review-list .n { font-size: calc(13px * var(--ts, 1)); color: var(--heading); padding-top: 2px; font-family: var(--small-font); font-weight: 500; }
   .review-list .a { grid-column: 2; color: var(--heading); }
   .review-list .skipped { background: var(--warn-bg); }
   .review-list .skipped .a { color: var(--warn-text); }
@@ -122,9 +122,9 @@
   .review-head.warn { color: var(--warn-text); }
 
   /* done */
-  .code { font-family: var(--mono); font-size: clamp(1.15rem, 5.4vw, 1.6rem); letter-spacing: .04em; color: var(--heading); overflow-wrap: anywhere;
+  .code { font-family: var(--mono); font-size: calc(clamp(1.15rem, 5.4vw, 1.6rem) * var(--tb, 1)); letter-spacing: .04em; color: var(--heading); overflow-wrap: anywhere;
     background: var(--soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 6px 0; user-select: all; }
-  .link { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; margin: 8px 0 0; }
+  .link { font-size: calc(12px * var(--ts, 1)); overflow-wrap: anywhere; margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
   .visit { font-family: var(--mono); color: var(--heading); }
 
   /* packet checklist and sharing */
@@ -134,19 +134,19 @@
   .rows .done::before { content: "✓ "; }
   .rows .btn { min-height: 44px; padding: 8px 14px; }
   .steps { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
-  input.wide { max-width: 100%; font-size: 16px; letter-spacing: .02em; text-transform: none; }
+  input.wide { max-width: 100%; font-size: calc(16px * var(--tb, 1)); letter-spacing: .02em; text-transform: none; }
   .qr { forced-color-adjust: none; background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
   .qr .qr-too-long { line-height: 1.5; margin: 0; padding: 14px 16px; max-width: 320px; color: #7F1D1D; }
   .qr-tap { display: inline-block; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
   .qr-tap:disabled { cursor: default; }
-  textarea#comment { font: inherit; font-size: 16px; width: 100%; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius);
+  textarea#comment { font: inherit; font-size: calc(16px * var(--tb, 1)); width: 100%; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius);
     background: var(--soft); color: var(--heading); resize: vertical; }
   textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   /* Full view of a QR: white in both themes, as large as the screen allows */
   #qr-full { position: fixed; inset: 0; z-index: 50; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
   #qr-full[hidden] { display: none; }
   #qr-full-box img { display: block; image-rendering: pixelated; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
-  #qr-close { font: inherit; font-weight: 600; font-size: 16px; min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
+  #qr-close { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
   #qr-close:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }
   .qr img { width: min(78vw, 320px); height: auto; display: block; image-rendering: pixelated; }
   #print-sheet { display: none; }
@@ -174,7 +174,7 @@
       --page:#FFF; --panel:#FFF; --soft:#FFF; --subtle:#EEE; --heading:#000; --body:#222; --border:#999; --band:#FFF; --band-text:#000; --band-muted:#333;
       --brand:#000; --brand-text:#FFF; --edge:#999; --nav:#FFF; --track:#EEE;
     }
-    .theme-toggle, .back, .noprint, #intro { display: none !important; }
+    .theme-toggle, .home, .noprint, #intro { display: none !important; }
     /* "Print or save PDF": only the result sheet */
     body.print-result header, body.print-result main, body.print-result footer { display: none !important; }
     body.print-result #print-sheet { display: block; padding: 24px; text-align: center; color: #000; }
@@ -199,6 +199,8 @@
 </div>
 <header class="band">
   <div class="band-inner">
+    <!-- Home (owner, 2026-11-01): same place on every screen except the home screen; vanderbilt-page.js shows it. -->
+    <button type="button" class="home" id="home-btn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-t="home"></span></button>
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
     <h1>ADHD Rating Forms</h1>
     <p class="by">For parents and teachers</p>
@@ -233,7 +235,6 @@
     <p class="msg" id="setup-msg" role="alert"></p>
     <div class="btns">
       <button type="button" class="btn" id="setup-go" data-t="setupStart"></button>
-      <button type="button" class="btn secondary" id="setup-back" data-t="backToPacket" hidden></button>
     </div>
   </section>
 
@@ -351,7 +352,7 @@
 <script src="vanderbilt-codes.js?v=4"></script>
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-strings-en.js?v=7"></script>
-<script src="vanderbilt-page.js?v=10"></script>
+<script src="vanderbilt-strings-en.js?v=8"></script>
+<script src="vanderbilt-page.js?v=11"></script>
 </body>
 </html>

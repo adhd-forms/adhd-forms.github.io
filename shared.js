@@ -35,7 +35,9 @@
   src: url("${fontUrl}") format("woff2"); }
 :root { --small-font: "Atkinson Hyperlegible Next", system-ui, sans-serif; }
 .top-tools { position: absolute; top: 12px; right: 16px; display: flex; gap: 8px; }
-.top-tools .theme-toggle { position: static; }
+.settings-panel .theme-toggle { position: static; display: block; width: 100%; min-height: 44px; margin: 0 0 12px; padding: 8px 12px; font: inherit;
+  font-size: calc(16px * var(--tb, 1)); font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--heading); background: transparent;
+  border: 1px solid var(--edge, var(--body)); border-radius: var(--radius); cursor: pointer; }
 .cog { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; color: var(--band-text); background: transparent;
   border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; }
 .cog svg { width: 20px; height: 20px; }
@@ -130,7 +132,7 @@
     if (!btn) return;
     const isDark = () => document.documentElement.dataset.theme === "dark";
     const label = () => {
-      btn.textContent = isDark() ? "☀ Light" : "☾ Dark";
+      btn.textContent = isDark() ? "☀ Light mode" : "☾ Dark mode";
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute("content", isDark() ? "#0D0D0C" : "#232323");
     };
@@ -143,7 +145,7 @@
     label();
   }
 
-  // Settings: a small cogwheel left of the light/dark switch opens a panel with the text-size slider.
+  // Settings: a small cogwheel opens a panel with the light/dark switch (owner, 2026-11-03) and the text-size slider.
   // Pages that redraw by size listen for the "peds-text-size" event.
   const COG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
@@ -158,12 +160,13 @@
     cog.setAttribute("aria-label", "Settings");
     cog.setAttribute("aria-expanded", "false");
     cog.setAttribute("aria-controls", "settings-panel");
-    tools.append(cog, toggle);
+    tools.append(cog);
     const panel = document.createElement("div");
     panel.id = "settings-panel"; panel.className = "settings-panel"; panel.hidden = true;
     panel.innerHTML = '<label for="text-size">Text size</label>' +
       '<input type="range" id="text-size" min="0" max="' + TEXT_STEPS + '" step="1">' +
       '<div class="ts-ends"><span class="a1" aria-hidden="true">A</span><output for="text-size" id="text-size-out"></output><span class="a2" aria-hidden="true">A</span></div>';
+    panel.prepend(toggle);
     tools.after(panel);
     const range = panel.querySelector("input"), out = panel.querySelector("output");
     const pct = n => Math.round(scaleOf(n) * 100) + "%";

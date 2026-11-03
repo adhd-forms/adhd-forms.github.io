@@ -79,6 +79,7 @@
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
+  .timer { margin: 0 0 12px; font-family: var(--mono); color: var(--heading); font-variant-numeric: tabular-nums; }
   [hidden] { display: none !important; }
   input[type=text] { font: inherit; font-family: var(--mono); font-size: calc(16px * var(--tb, 1)); width: 100%; min-height: 48px; padding: 8px 12px;
     border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
@@ -186,11 +187,12 @@
   </form>
 
   <div id="tool" data-pin-gated hidden>
+    <p class="timer noprint" id="timer" role="timer"></p>
     <section class="card noprint">
       <label for="add-in" id="add-label"><strong>Add a result</strong></label>
-      <p class="legend">Paste a link (from MyChart or a QR) or type a backup code. Add each person's result one at a time; they are matched by visit code.</p>
+      <p class="legend">Paste a link (from MyChart or a QR) or type a backup code.</p>
       <label for="visit-in"><strong>Visit code</strong></label>
-      <p class="legend">Needed for typed backup codes (they don't include it). Filled in for you once a link or QR is added.</p>
+      <p class="legend">This is only needed if you are entering a backup code. It will automatically be filled in if you use a QR code or paste a URL.</p>
       <input type="text" id="visit-in" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="7KQ4-M9XD">
       <p class="legend" style="margin-top:12px">Link, QR text or backup code:</p>
       <input type="text" id="add-in" autocomplete="off" autocapitalize="characters" spellcheck="false">
@@ -207,7 +209,7 @@
       </div>
     </section>
 
-    <p id="empty">No results yet. Nothing on this page is saved or sent; it lives only in this tab and its address.</p>
+    <p id="empty">No results yet. Information entered during this session will stay on this computer, and is not sent anywhere.</p>
 
     <section class="card" id="report" hidden>
       <div class="top"><span class="visit-big" id="r-visit"></span><span class="kind-big" id="r-kind"></span></div>
@@ -268,6 +270,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=9"></script>
+<script src="vanderbilt-clinic.js?v=10"></script>
 </body>
 </html>

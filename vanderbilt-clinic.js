@@ -12,6 +12,27 @@
 
   let packet = null;
 
+  // ---------- timer (owner, 2026-11-03): page open, or Clear, to the first report on screen. Never stored or sent. ----------
+  let timerStart = 0, timerId = null;
+  function showTimer(label) {
+    const s = Math.floor((Date.now() - timerStart) / 1000), m = Math.floor(s / 60);
+    $("timer").textContent = label + m + ":" + String(s % 60).padStart(2, "0");
+  }
+  function startTimer() {
+    clearInterval(timerId);
+    timerStart = Date.now();
+    timerId = setInterval(() => showTimer("Time to score: "), 1000);
+    showTimer("Time to score: ");
+  }
+  // Only the first report counts: later results leave the time as it is.
+  function stopTimer() {
+    if (timerId === null) return;
+    clearInterval(timerId);
+    timerId = null;
+    showTimer("Scored in ");
+  }
+  startTimer();
+
   function setAddress() {
     history.replaceState(null, "", packet ? "#" + C.toLink(C.encodePacket(packet)).split("#")[1] : location.pathname);
   }
@@ -146,6 +167,7 @@
         cells: [{ value: i.value, label: i.label, problem: i.problem }] }));
       tables.append(table("Performance: " + t.label, rows, [t.slot]));
     });
+    stopTimer();
   }
 
   $("copy-epic").addEventListener("click", () => {
@@ -177,6 +199,7 @@
     stopScan();
     if (packet && !confirm("Clear these results from this page?")) return;
     packet = null; setAddress(); $("visit-in").value = ""; render();
+    startTimer();
     $("add-msg").textContent = "Cleared.";
     $("add-label").firstChild.textContent = "Add a result";
   });

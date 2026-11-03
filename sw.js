@@ -3,14 +3,14 @@
 // cache), so a fix reaches phones on the next online load. The saved copy is used only when the network fails.
 // Answers never pass through here: they live after "#" in links, which browsers never send, and in localStorage.
 // Any ?v= bump, new or renamed file: update PRECACHE with the exact URL the page requests and bump CACHE.
-const CACHE = "adhd-forms-v16";
+const CACHE = "adhd-forms-v17";
 const PRECACHE = [
   "/", "/clinic.html", "/credits.html", "/credits.js", "/feedback.html", "/feedback.js?v=1",
   "/manifest.webmanifest", "/clinic.webmanifest",
   "/shared.js?v=5", "/fonts/atkinson-hyperlegible-next-latin.woff2",
   "/vanderbilt-forms.js?v=3", "/vanderbilt-score.js?v=2", "/vanderbilt-codes.js?v=4",
   "/vanderbilt-strings-en.js?v=8", "/vanderbilt-page.js?v=11", "/vanderbilt-note-template.js?v=2",
-  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=10", "/vanderbilt-scan.js?v=2",
+  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=11", "/vanderbilt-scan.js?v=2",
   "/vendor/qrcode-generator-2.0.4.js", "/vendor/jsQR-1.4.0.js",
   "/favicon.svg", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png", "/icon-maskable-512.png",
 ];

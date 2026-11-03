@@ -76,6 +76,7 @@
   .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
   .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
+  .btn:disabled { background: var(--nav); color: var(--body); border-color: var(--nav); cursor: not-allowed; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
@@ -95,7 +96,6 @@
   .kind-big { font-family: var(--serif); font-size: calc(1.5rem * var(--tb, 1)); color: var(--heading); }
   .note { font-family: Arial, Helvetica, sans-serif; font-size: calc(14px * var(--tb, 1)); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--soft); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 10px 12px; margin: 10px 0 0; color: var(--heading); }
-  .verify { margin: 12px 0 0; padding: 8px 12px; border-left: 3px solid var(--warn-border); background: var(--warn-bg); color: var(--warn-text); font-size: calc(14.5px * var(--tb, 1)); }
   .rater { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
   .rater ul { list-style: none; margin: 4px 0 0; padding: 0; }
   .rater li { padding: 2px 0; }
@@ -215,7 +215,6 @@
       <div class="top"><span class="visit-big" id="r-visit"></span><span class="kind-big" id="r-kind"></span></div>
       <div class="btns noprint"><button type="button" class="btn" id="copy-epic">Copy for Epic</button></div>
       <pre class="note" id="r-note"></pre>
-      <p class="verify" id="r-verify" hidden>Not yet checked against the paper forms: item wording and scoring rules.</p>
       <div id="r-raters"></div>
       <p class="missing" id="r-missing" hidden></p>
       <details class="drill">
@@ -242,7 +241,7 @@
     <section class="card noprint">
       <h3>Print parent feedback QR</h3>
       <p class="legend">ADHD QI Project. One page with a QR code that opens the parent feedback page (3 anonymous questions about this website). For parents only, not teachers. It has no visit code, so one printout can be used again and again.</p>
-      <div class="btns"><button type="button" class="btn" id="fb-print">Print feedback QR</button></div>
+      <div class="btns"><button type="button" class="btn" id="fb-print" disabled>Print feedback QR (work in progress)</button></div>
     </section>
 
     <div class="btns noprint">
@@ -270,6 +269,6 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=10"></script>
+<script src="vanderbilt-clinic.js?v=11"></script>
 </body>
 </html>

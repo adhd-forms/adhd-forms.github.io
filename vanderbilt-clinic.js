@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  const C = window.PedsVanderbiltCodes, Rep = window.PedsVanderbiltReport, F = window.PedsVanderbiltForms;
+  const C = window.PedsVanderbiltCodes, Rep = window.PedsVanderbiltReport;
   const $ = id => document.getElementById(id);
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
 
@@ -147,9 +147,6 @@
     $("r-visit").textContent = rep.visitShown;
     $("r-kind").textContent = rep.kind === "initial" ? "Initial" : "Follow-up";
     $("r-note").textContent = Rep.noteText(rep);
-    // Shown only if a VERIFY tag comes back: the owner checked the form text and scoring, 2026-10-23.
-    const formVerify = rep.raters.some(r => F.FORMS[r.formId].verify);
-    $("r-verify").hidden = !(formVerify || rep.verify.length);
     const raters = $("r-raters");
     raters.textContent = "";
     rep.raters.forEach(r => raters.append(raterBlock(r, rep.kind)));

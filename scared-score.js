@@ -12,26 +12,25 @@
   if (!F) throw new Error("scared-score.js needs scared-forms.js loaded first");
 
   const ITEM_COUNT = 41;
-  const VERIFY = "VERIFY: owner to check against the scoring aide, printed page 45";
 
   // medical-data. Source: SCARED Rating Scale Scoring Aide, owner's PDF, printed page 45
   // The aide prints "≥ 25" for the total but only "A score of 7" and "Cutoff = 7" for the
   // subscales; reading each subscale as at or above its cutoff is the owner's decision, 2026-11-05.
   // The aide says "Use with Parent and Child Versions", so both forms share these rules.
+  // Checked against the scoring aide, printed page 45, by the owner, 2026-11-05.
   const RULES = {
     subscales: [
-      { id: "panic", label: "Panic/Somatic", items: [1, 6, 9, 12, 15, 18, 19, 22, 24, 27, 30, 34, 38], cutoff: 7, indicates: "may indicate Panic Disorder or Significant Somatic Symptoms", verify: VERIFY },
-      { id: "gad", label: "Generalized Anxiety", items: [5, 7, 14, 21, 23, 28, 33, 35, 37], cutoff: 9, indicates: "may indicate Generalized Anxiety Disorder", verify: VERIFY },
-      { id: "separation", label: "Separation", items: [4, 8, 13, 16, 20, 25, 29, 31], cutoff: 5, indicates: "may indicate Separation Anxiety Disorder", verify: VERIFY },
-      { id: "social", label: "Social", items: [3, 10, 26, 32, 39, 40, 41], cutoff: 8, indicates: "may indicate Social Anxiety Disorder", verify: VERIFY },
-      { id: "school", label: "School Avoidance", items: [2, 11, 17, 36], cutoff: 3, indicates: "may indicate Significant School Avoidance", verify: VERIFY }
+      { id: "panic", label: "Panic/Somatic", items: [1, 6, 9, 12, 15, 18, 19, 22, 24, 27, 30, 34, 38], cutoff: 7, indicates: "may indicate Panic Disorder or Significant Somatic Symptoms" },
+      { id: "gad", label: "Generalized Anxiety", items: [5, 7, 14, 21, 23, 28, 33, 35, 37], cutoff: 9, indicates: "may indicate Generalized Anxiety Disorder" },
+      { id: "separation", label: "Separation", items: [4, 8, 13, 16, 20, 25, 29, 31], cutoff: 5, indicates: "may indicate Separation Anxiety Disorder" },
+      { id: "social", label: "Social", items: [3, 10, 26, 32, 39, 40, 41], cutoff: 8, indicates: "may indicate Social Anxiety Disorder" },
+      { id: "school", label: "School Avoidance", items: [2, 11, 17, 36], cutoff: 3, indicates: "may indicate Significant School Avoidance" }
     ],
     total: {
       cutoff: 25,
       indicates: "may indicate the presence of an Anxiety Disorder",
       moreSpecificAbove: 30,
-      moreSpecificNote: "Scores higher than 30 are more specific.",
-      verify: VERIFY
+      moreSpecificNote: "Scores higher than 30 are more specific."
     }
   };
 

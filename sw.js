@@ -1,9 +1,10 @@
 // Offline copy for ADHD Rating Forms (adhd-forms.github.io), same logic as Pediatric Tools' worker.
 // Network first: online, every page and file comes fresh from the site (revalidated past the browser
 // cache), so a fix reaches phones on the next online load. The saved copy is used only when the network fails.
-// Answers never pass through here: they live after "#" in links, which browsers never send, and in localStorage.
+// Answers live after "#" in links and in localStorage. Browsers don't send the "#" part, but req.url includes it,
+// so it is removed before anything is fetched or saved.
 // Any ?v= bump, new or renamed file: update PRECACHE with the exact URL the page requests and bump CACHE.
-const CACHE = "adhd-forms-v19";
+const CACHE = "adhd-forms-v20";
 const PRECACHE = [
   "/", "/clinic.html", "/credits.html", "/credits.js", "/feedback.html", "/feedback.js?v=1", "/qi.html",
   "/manifest.webmanifest", "/clinic.webmanifest",
@@ -31,23 +32,24 @@ self.addEventListener("fetch", event => {
   const req = event.request;
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin) return;
-  event.respondWith(fromNetwork(req).catch(() => fromCache(req)));
+  url.hash = "";
+  event.respondWith(fromNetwork(url.href).catch(() => fromCache(req, url.href)));
 });
 
-async function fromNetwork(req) {
-  const res = await fetch(req.url, { cache: "no-cache", credentials: "same-origin" });
+async function fromNetwork(address) {
+  const res = await fetch(address, { cache: "no-cache", credentials: "same-origin" });
   if (res.redirected) return Response.redirect(res.url, 302);
   // Only good same-origin answers replace the saved copy; an error page during a deploy never does.
   if (res.ok && res.type === "basic") {
     const copy = res.clone();
-    caches.open(CACHE).then(cache => cache.put(req.url, copy));
+    caches.open(CACHE).then(cache => cache.put(address, copy));
   }
   return res;
 }
 
-async function fromCache(req) {
+async function fromCache(req, address) {
   const cache = await caches.open(CACHE);
-  const hit = await cache.match(req.url, { ignoreSearch: req.mode === "navigate" });
+  const hit = await cache.match(address, { ignoreSearch: req.mode === "navigate" });
   if (hit) return hit;
   if (req.mode !== "navigate") throw new Error("offline and not saved");
   return (await cache.match("/")) || Response.error();

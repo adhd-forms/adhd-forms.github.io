@@ -253,6 +253,16 @@
       </div>
     </section>
 
+    <!-- SCARED (case 5, 2026-11-05): one page per family, a new visit code, parent and child QR codes; scared-clinic.js -->
+    <section class="card noprint">
+      <h3>Print SCARED handouts</h3>
+      <p class="legend">A family will only need one page. Each page has a randomized visit code and two QR codes: one opens the parent form, the other the child form. Be sure to write the visit code from the handout in the chart.</p>
+      <div class="h-row">
+        <label>How many<br><input type="number" id="sh-count" min="1" max="50" value="20"></label>
+      </div>
+      <div class="btns"><button type="button" class="btn" id="sh-print">Print SCARED handouts</button></div>
+    </section>
+
     <!-- ADHD QI Project (owner, 2026-10-31): one page with the parent feedback QR, for rooms or to hand out -->
     <section class="card noprint">
       <h3>Print parent feedback QR</h3>
@@ -291,7 +301,7 @@
 <script src="scared-codes.js?v=1"></script>
 <script src="scared-note-template.js?v=1"></script>
 <script src="scared-report.js?v=1"></script>
-<script src="scared-clinic.js?v=1"></script>
+<script src="scared-clinic.js?v=2"></script>
 <script src="vanderbilt-clinic.js?v=12"></script>
 </body>
 </html>

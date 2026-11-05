@@ -89,6 +89,64 @@
     else select();
   });
 
+  // ---------- printable handouts (case 5): one page per family, a new visit code, parent and child QR codes ----------
+  // The page is cleared after printing by the clinic script's afterprint handler, so no code is kept.
+  function qrSvg(text, label) {
+    const q = window.qrcode(0, "M");
+    q.addData(text); q.make();
+    const n = q.getModuleCount(), size = n + 8, NS = "http://www.w3.org/2000/svg";
+    let d = "";
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) d += "M" + (x + 4) + " " + (y + 4) + "h1v1h-1z";
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + size + " " + size);
+    svg.setAttribute("role", "img"); svg.setAttribute("aria-label", label);
+    const bg = document.createElementNS(NS, "rect");
+    bg.setAttribute("width", size); bg.setAttribute("height", size); bg.setAttribute("fill", "#FFFFFF");
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d); path.setAttribute("fill", "#000000");
+    svg.append(bg, path);
+    return svg;
+  }
+  // Claude's wording, for the owner's review.
+  const STEPS = [
+    "Scan the Parent code with your phone camera and answer the questions.",
+    "Have your child scan the Child code (on your phone or theirs) and answer the questions.",
+    "When each form is done, show its QR code at the visit, or tap Send and paste it into a MyChart message."
+  ];
+  function buildHandouts(count) {
+    const box = $("handouts"), used = new Set();
+    box.textContent = "";
+    while (used.size < count) used.add(C.newVisitCode());
+    used.forEach(visit => {
+      const shown = C.formatVisitCode(visit), page = el("section", "handout with-strips");
+      page.dataset.visit = visit;
+      page.append(el("h2", null, F.FORMS.parent.title), el("p", "h-code", shown));
+      const ol = el("ol");
+      STEPS.forEach(s => ol.append(el("li", null, s)));
+      const row = el("div", "h-strips");
+      ["parent", "child"].forEach(form => {
+        const strip = el("div", "h-strip"), qr = el("div", "h-qr");
+        strip.dataset.form = form;
+        const name = form === "parent" ? "Parent" : "Child";
+        qr.append(qrSvg(C.inviteLink({ visit: visit, form: form }), "QR code for the " + name.toLowerCase() + " form, visit " + shown));
+        strip.append(el("p", "h-strip-title", name), qr, el("p", "h-strip-text", F.FORMS[form].fillBy));
+        row.append(strip);
+      });
+      page.append(ol, row,
+        el("p", "h-note", F.FORMS.child.note),
+        el("p", "h-note", "No names or birthdays are asked. Do not include names or other identifying details. Answers stay on the phone until they are sent."),
+        el("p", "h-stub", "For the chart: visit code " + shown + " (staff, please write this in the chart)."));
+      box.append(page);
+    });
+  }
+  $("sh-print").addEventListener("click", () => {
+    const n = Math.max(1, Math.min(50, Math.round(Number($("sh-count").value)) || 1));
+    $("sh-count").value = n;
+    buildHandouts(n);
+    document.body.classList.add("print-handouts");
+    window.print();
+  });
+
   $("scared-attr").textContent = "SCARED: " + F.ATTRIBUTION;
 
   window.PedsScaredClinic = Object.freeze({

@@ -19,4 +19,13 @@ The completed form will show a typed **backup code**, for when a link or QR code
 - The last two characters are checks: if there is a wrong character, two swapped neighbor characters, or any two wrong characters, it will be caught. Also, a random mistyped code should get through only about 1 time in 1,000. URL links and QR codes carry a stronger check and the full visit code.
 - Every question must be answered before a form can be finished. 
 
+## SCARED anxiety forms
+
+The Screen for Child Anxiety Related Disorders (SCARED), parent and child versions, on the same site.
+
+- `scared.html`: the form page for a parent or a child, opened from the printed handout's QR codes (one page per family, a new visit code, one code for each form). Every question is required; once a form is submitted its answers can't be reopened, only its QR code, link and backup code remain. Families never see scores.
+- `clinic.html`: reads SCARED links, QR codes and backup codes too, and shows the parent and child results side by side: total and five subscales, no combined score, and a note to copy into Epic.
+- Links: `scared.html#a…` opens a form, `scared.html#s…` carries a finished one. Backup codes are 18 characters (`XXXX-XXXX-XXXX-XXXX-XX`), with the visit code entered once at the clinic.
+- Files: `scared-forms.js` (questions), `scared-score.js` (scoring), `scared-codes.js` (links and backup codes), `scared-page.js`, `scared-report.js`, `scared-note-template.js` (the note's wording) and `scared-clinic.js`.
+
 Third-party code, saved unchanged in `vendor/`: qrcode-generator 2.0.4 (MIT) and jsQR 1.4.0 (Apache License 2.0). See `credits.html`.

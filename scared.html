@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Privacy (owner's spec): answers live only in the page and in links after "#". No third-party
+     scripts or fonts, no inline scripts, no referrer. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Screen for Child Anxiety Related Disorders (SCARED)</title>
+<meta name="theme-color" content="#0D0D0C">
+<!-- The site draws its own dark mode, so phone browsers don't force theirs (it turned the QR's white background dark). -->
+<meta name="color-scheme" content="light dark">
+<!-- Night Mode in Brave on iPhone (Dark Reader) stays off here, so the site's own light/dark switch decides (owner, 2026-11-03). -->
+<meta name="darkreader-lock">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="shared.js?v=6"></script>
+<style>
+  /* Same tokens as Pediatric Tools. System fonts only (no web fonts on this site). */
+  :root {
+    --page: #F4F4F5; --panel: #FFFFFF; --soft: #FAFAFA;
+    --brand: #232323; --brand-text: #FFFFFF;
+    --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --heading: #18181B; --body: #52525B; --border: #E4E4E7; --subtle: #F2F2F2;
+    --warn-bg: #FEF2F2; --warn-border: #FCA5A5; --warn-text: #7F1D1D;
+    /* control edges at 3:1 or more against the card; grey fill for Back / Review Questions (owner, 2026-10-24) */
+    --edge: #8A8A93; --nav: #E4E4E7; --track: #8A8A93; --dis-text: #6B6B73;
+    --focus: #161616; --radius: 4px;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+      --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+      --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
+      --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+    --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+    --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
+    --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
+  }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--body); font: calc(16px * var(--tb, 1))/1.55 var(--sans); }
+  strong, b { color: var(--heading); font-weight: 600; }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 40px 16px 32px; position: relative; }
+  header.band .band-inner { padding-top: 64px; }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: calc(clamp(1.9rem, 6vw, 2.6rem) * var(--tb, 1)); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band .by { margin: 0; color: var(--band-muted); }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-size: calc(12px * var(--ts, 1)); font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; font-family: var(--small-font); }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: calc(13px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
+  footer.band p { margin: 0 0 8px; color: var(--band-muted); }
+  footer.band a { color: inherit; text-underline-offset: 2px; }
+  footer.band .sprite-credit { margin-top: 14px; font-size: calc(12px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: calc(1.5rem * var(--tb, 1)); color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+    background: var(--brand); color: var(--brand-text); cursor: pointer; }
+  .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
+  .btn:disabled { background: var(--subtle); color: var(--dis-text); border-color: var(--edge); cursor: not-allowed; }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  button:focus-visible, a:focus-visible, input:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .hint { font-size: calc(14.5px * var(--tb, 1)); margin: 6px 0 0; }
+  .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
+  [hidden] { display: none !important; }
+  label.field { display: block; margin: 14px 0 6px; color: var(--heading); }
+  input[type=text] { font: inherit; font-family: var(--mono); font-size: calc(20px * var(--tb, 1)); letter-spacing: .08em; text-transform: uppercase; width: 100%; max-width: 280px;
+    min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+
+  /* choice pills (radio inputs styled as buttons) */
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label { display: flex; align-items: center; min-height: 48px; padding: 10px 12px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); cursor: pointer; color: var(--heading); line-height: 1.3; }
+  .choices input:checked + label { background: var(--brand); color: var(--brand-text); border-color: var(--brand); }
+  fieldset { border: 0; padding: 0; margin: 16px 0 0; } legend { color: var(--heading); margin-bottom: 8px; padding: 0; }
+
+  /* one question per screen */
+  .bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--brand); width: 0; transition: width .2s; }
+  .progress { font-size: calc(13px * var(--ts, 1)); margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
+  .section-line { font-size: calc(14.5px * var(--tb, 1)); margin: 14px 0 4px; }
+  .qtext { font-family: var(--serif); font-size: calc(1.45rem * var(--tb, 1)); line-height: 1.3; color: var(--heading); margin: 6px 0 0; }
+  .qhead { height: calc(12rem * var(--tb, 1)); overflow: hidden; margin-bottom: 14px; }
+  .wide-btn { width: 100%; }
+  .bottom-link { margin: 14px 0 0; font-size: calc(14.5px * var(--tb, 1)); }
+  .qtext:focus { outline: none; }
+  .answers { display: grid; gap: 10px; }
+  .answers button { font: inherit; font-size: calc(18px * var(--tb, 1)); text-align: left; min-height: 56px; padding: 12px 16px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); color: var(--heading); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  /* Selected answer: thick outline and a check mark, not a filled block (owner, 2026-10-24). The 3px border takes 2px of padding, so nothing moves. */
+  .answers button.picked { border: 3px solid var(--brand); padding: 10px 14px; font-weight: 600; }
+  .answers button.picked::after { content: ""; flex: none; width: 26px; height: 26px; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5l4 4 8-9'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5l4 4 8-9'/%3E%3C/svg%3E") center / contain no-repeat; }
+  .nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+
+  /* review */
+  .review-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .review-list button { font: inherit; width: 100%; text-align: left; display: grid; grid-template-columns: 2.4em 1fr; gap: 4px 8px; padding: 10px 8px; min-height: 48px;
+    background: transparent; border: 0; border-bottom: 1px solid var(--border); color: var(--body); cursor: pointer; }
+  .review-list .n { font-size: calc(13px * var(--ts, 1)); color: var(--heading); padding-top: 2px; font-family: var(--small-font); font-weight: 500; }
+  .review-list .a { grid-column: 2; color: var(--heading); }
+  .review-list .skipped { background: var(--warn-bg); }
+  .review-list .skipped .a { color: var(--warn-text); }
+  .review-head { margin: 4px 0 0; }
+  .review-head.warn { color: var(--warn-text); }
+
+  /* done */
+  .code { font-family: var(--mono); font-size: calc(clamp(1.15rem, 5.4vw, 1.6rem) * var(--tb, 1)); letter-spacing: .04em; color: var(--heading); overflow-wrap: anywhere;
+    background: var(--soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 6px 0; user-select: all; }
+  .link { font-size: calc(12px * var(--ts, 1)); overflow-wrap: anywhere; margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
+  .visit { font-family: var(--mono); color: var(--heading); }
+
+  .qr { forced-color-adjust: none; background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
+  .qr-tap { display: inline-block; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
+  .qr-tap:disabled { cursor: default; }
+  /* Full view of a QR: white in both themes, as large as the screen allows */
+  #qr-full { position: fixed; inset: 0; z-index: 50; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
+  #qr-full[hidden] { display: none; }
+  #qr-full-box img { display: block; image-rendering: pixelated; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
+  #qr-close { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
+  #qr-close:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }
+  .qr img { width: min(78vw, 320px); height: auto; display: block; image-rendering: pixelated; }
+
+  @media (prefers-reduced-motion: reduce) { .bar span { transition: none; } }
+  @media print {
+    :root, :root[data-theme="dark"], :root[data-theme="light"], :root:not([data-theme="light"]) {
+      --page:#FFF; --panel:#FFF; --soft:#FFF; --subtle:#EEE; --heading:#000; --body:#222; --border:#999; --band:#FFF; --band-text:#000; --band-muted:#333;
+      --brand:#000; --brand-text:#FFF; --edge:#999; --nav:#FFF; --track:#EEE;
+    }
+    .theme-toggle, .home, .noprint { display: none !important; }
+  }
+
+  /* setup: the printed heading, and the 8-11 note set apart */
+  .dir-head { margin: 14px 0 4px; color: var(--heading); font-weight: 600; }
+  .note { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
+  .qr-wrap { margin: 14px 0 0; }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="band-inner">
+    <button type="button" class="home" id="home-btn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-t="home"></span></button>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>Screen for Child Anxiety Related Disorders (SCARED)</h1>
+    <p class="by" data-t="by"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="msg" id="top-msg" role="status" aria-live="polite"></p>
+
+  <section class="card" id="s-start" hidden>
+    <h2 data-t="startTitle"></h2>
+    <p data-t="startIntro"></p>
+    <label class="field" for="code-in" data-t="startCode"></label>
+    <input type="text" id="code-in" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" inputmode="text">
+    <p class="hint" data-t="startCodeHint"></p>
+    <fieldset class="choices" id="form-pick"><legend data-t="startWho"></legend></fieldset>
+    <p class="msg" id="start-msg" role="alert"></p>
+    <div class="btns"><button type="button" class="btn" id="start-go" data-t="start"></button></div>
+  </section>
+
+  <section class="card" id="s-setup" hidden>
+    <p class="visit" id="setup-visit"></p>
+    <h2 id="setup-version"></h2>
+    <p id="setup-fill"></p>
+    <p class="dir-head" data-t="directions"></p>
+    <p id="setup-directions"></p>
+    <p class="note" id="setup-note" hidden></p>
+    <div class="btns"><button type="button" class="btn" id="setup-go" data-t="start"></button></div>
+  </section>
+
+  <section class="card" id="s-question" hidden>
+    <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+    <p class="progress" id="progress"></p>
+    <div class="qhead" id="qhead">
+      <p class="section-line" id="section-line"></p>
+      <p class="qtext" id="qtext" tabindex="-1"></p>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="nav"><button type="button" class="btn secondary" id="q-back" data-t="back"></button></div>
+    <div class="btns"><button type="button" class="btn secondary wide-btn" id="q-summary" data-t="summaryButton"></button></div>
+  </section>
+
+  <section class="card" id="s-review" hidden>
+    <h2 data-t="reviewTitle"></h2>
+    <p class="review-head" id="review-head"></p>
+    <ul class="review-list" id="review-list"></ul>
+    <p class="msg" id="review-msg" role="alert"></p>
+    <div class="btns"><button type="button" class="btn" id="review-submit" data-t="reviewSubmit"></button></div>
+  </section>
+
+  <section class="card" id="s-done" hidden>
+    <h2 data-t="doneTitle"></h2>
+    <p data-t="doneIntro"></p>
+    <p class="visit" id="done-visit"></p>
+    <div class="qr-wrap"><button type="button" class="qr-tap" id="qr-tap"><span class="qr" id="qr-box"></span></button></div>
+    <p class="hint noprint" data-t="qrTapHint"></p>
+    <p><strong data-t="doneCode"></strong></p>
+    <p class="code" id="done-code"></p>
+    <p class="hint" data-t="doneCodeHint"></p>
+    <div class="btns">
+      <button type="button" class="btn" id="done-send" data-t="doneSend"></button>
+      <button type="button" class="btn secondary" id="done-copy" data-t="doneCopy"></button>
+    </div>
+    <p class="link" id="done-link"></p>
+  </section>
+
+  <div class="btns noprint"><button type="button" class="btn secondary" id="clear-all" data-t="clear"></button></div>
+</main>
+
+<div id="qr-full" class="noprint" role="dialog" aria-modal="true" hidden>
+  <div id="qr-full-box"></div>
+  <button type="button" id="qr-close" data-t="qrClose"></button>
+</div>
+
+<footer class="band">
+  <div class="band-inner">
+    <p id="attr"></p>
+  </div>
+</footer>
+
+<script src="scared-forms.js?v=1"></script>
+<script src="scared-score.js?v=1"></script>
+<script src="scared-codes.js?v=1"></script>
+<script src="vendor/qrcode-generator-2.0.4.js"></script>
+<script src="scared-page.js?v=1"></script>
+</body>
+</html>

@@ -12,6 +12,13 @@
 
   let packet = null;
 
+  // SCARED results go to scared-clinic.js (case 4, 2026-11-05). One form family at a time: the other is
+  // refused until Clear. If the SCARED scripts didn't load, every code stays with Vanderbilt as before.
+  const SC = window.PedsScaredClinic && window.PedsScaredCodes ? window.PedsScaredClinic : null;
+  const isScared = text => !!SC && window.PedsScaredCodes.isScared(text);
+  const scaredOpen = () => !!SC && SC.active();
+  const CLEAR_FIRST = "Clear the current results first.";
+
   // ---------- timer (owner, 2026-11-03): page open, or Clear, to the first report on screen. Never stored or sent. ----------
   let timerStart = 0, timerId = null;
   function showTimer(label) {
@@ -53,6 +60,12 @@
   }
 
   $("add-go").addEventListener("click", () => {
+    const text = $("add-in").value;
+    if (isScared(text) || scaredOpen()) {
+      $("add-msg").textContent = packet || !isScared(text) ? CLEAR_FIRST : SC.take(text, $("visit-in").value);
+      $("add-in").value = "";
+      return;
+    }
     let d;
     // Typed backup codes carry only a visit tag: check them against the packet's visit, or the one entered.
     let visit = packet ? packet.visit : null;
@@ -136,11 +149,12 @@
   function syncVisit() {
     const v = $("visit-in");
     if (packet) { v.value = C.formatVisitCode(packet.visit); v.readOnly = true; }
+    else if (scaredOpen()) { v.value = window.PedsScaredCodes.formatVisitCode(SC.visit()); v.readOnly = true; }
     else { v.readOnly = false; }
   }
   function render() {
     syncVisit();
-    $("empty").hidden = !!packet;
+    $("empty").hidden = !!packet || scaredOpen();
     $("report").hidden = !packet;
     if (!packet) return;
     const rep = Rep.build(packet);
@@ -177,6 +191,12 @@
 
   // ---------- QR scanner (vanderbilt-scan.js) ----------
   function found(text) {
+    if (isScared(text) || scaredOpen()) {
+      const msg = packet || !isScared(text) ? CLEAR_FIRST : SC.take(text, "");
+      $("add-msg").textContent = msg;
+      if (/results added/.test(msg)) window.PedsVanderbiltScanner.confetti();
+      return;
+    }
     let d;
     try { d = C.decode(text); } catch (e) { $("add-msg").textContent = e.message; return; }
     const msg = add(d);
@@ -194,8 +214,8 @@
 
   $("clear").addEventListener("click", () => {
     stopScan();
-    if (packet && !confirm("Clear these results from this page?")) return;
-    packet = null; setAddress(); $("visit-in").value = ""; render();
+    if ((packet || scaredOpen()) && !confirm("Clear these results from this page?")) return;
+    packet = null; if (SC) SC.clear(); setAddress(); $("visit-in").value = ""; render();
     startTimer();
     $("add-msg").textContent = "Cleared.";
     $("add-label").firstChild.textContent = "Add a result";
@@ -299,6 +319,13 @@
   });
 
   function fromHash() {
+    // SCARED first, before anything is reset: a refused link leaves open results and their address as they were.
+    // A SCARED link is read once; the address then keeps nothing (there is no SCARED packet).
+    if (location.hash.length > 1 && (isScared(location.hash) || scaredOpen())) {
+      $("add-msg").textContent = packet || !isScared(location.hash) ? CLEAR_FIRST : SC.take(location.hash, "");
+      setAddress();
+      return;
+    }
     packet = null;
     $("add-msg").textContent = "";
     if (location.hash.length > 1) {
@@ -307,6 +334,7 @@
     }
     render();
   }
+  if (SC) SC.connect({ onReport: () => { render(); stopTimer(); } });
   addEventListener("hashchange", fromHash);
   fromHash();
   // For checks in the console only: run one frame through the same reader the scanner uses.

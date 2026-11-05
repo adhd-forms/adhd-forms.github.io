@@ -226,6 +226,20 @@
       </details>
     </section>
 
+    <!-- SCARED (case 4, 2026-11-05): parent and child side by side, no combined score; scared-clinic.js fills it -->
+    <section class="card" id="s-report" hidden>
+      <div class="top"><span class="visit-big" id="s-visit"></span><span class="kind-big">SCARED</span></div>
+      <div class="btns noprint"><button type="button" class="btn" id="s-copy">Copy for Epic</button></div>
+      <pre class="note" id="s-note"></pre>
+      <div id="s-scales"></div>
+      <p class="missing" id="s-missing" hidden></p>
+      <details class="drill">
+        <summary>Item by item</summary>
+        <p class="legend">Answers are 0 (Not True or Hardly Ever True), 1 (Somewhat True or Sometimes True) and 2 (Very True or Often True); 2 is bolded.</p>
+        <div id="s-items"></div>
+      </details>
+    </section>
+
     <section class="card noprint">
       <h3>Print handouts</h3>
       <p class="legend">A family will only need one page. Each page has a randomized visit code and a matching QR code that opens the parent's form and/or teacher form: first-visit forms or follow-up forms. Be sure to write the visit code from the handout in the chart.</p>
@@ -257,6 +271,7 @@
 <footer class="band">
   <div class="band-inner">
     <p>Questions and scoring: NICHQ Vanderbilt Assessment Scales, Copyright ©2002 American Academy of Pediatrics and National Initiative for Children’s Healthcare Quality. Adapted from the Vanderbilt Rating Scales developed by Mark L. Wolraich, MD. Side effects adapted from the Pittsburgh side effects scale, developed by William E. Pelham, Jr, PhD. These scales should not be used alone to make a diagnosis.</p>
+    <p id="scared-attr" hidden></p>
     <p class="sprite-credit"><a href="credits.html">Credits</a><span class="gh-link" hidden> · <a href="https://github.com/adhd-forms/adhd-forms.github.io">Source code on GitHub</a></span></p>
   </div>
 </footer>
@@ -271,6 +286,12 @@
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vendor/jsQR-1.4.0.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-clinic.js?v=11"></script>
+<script src="scared-forms.js?v=1"></script>
+<script src="scared-score.js?v=1"></script>
+<script src="scared-codes.js?v=1"></script>
+<script src="scared-note-template.js?v=1"></script>
+<script src="scared-report.js?v=1"></script>
+<script src="scared-clinic.js?v=1"></script>
+<script src="vanderbilt-clinic.js?v=12"></script>
 </body>
 </html>

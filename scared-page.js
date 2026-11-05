@@ -49,6 +49,7 @@
     doneCopied: "Copied",
     msgSend: "Here are my answers to the SCARED form for visit {visit}: {link}",
     resultLinkNote: "This is a results link. Bring it to the clinic.",
+    clinicianLink: "Clinician? Open the report",
     clear: "Clear from this device",
     clearConfirm: "Remove every saved form and answer from this phone?",
     cleared: "Cleared from this device."
@@ -343,11 +344,18 @@
     $("top-msg").textContent = "";
     clearTimeout(advance);
     st = null;
+    $("clinic-link").hidden = true;
     if (location.hash.length > 1) {
       try {
         const d = C.decode(location.hash);
         if (d.type === "invite") return begin(d.value.visit, d.value.form);
+        // A clinician's device (PIN already entered here): open the clinic report straight away.
+        let clinician = false;
+        try { clinician = localStorage.getItem("peds-tools-clinician") === "1"; } catch (e) { /* storage off */ }
+        if (clinician) { location.replace("clinic.html" + location.hash); return; }
         $("top-msg").textContent = t("resultLinkNote");
+        $("clinic-link").href = "clinic.html" + location.hash;
+        $("clinic-link").hidden = false;
       } catch (e) { $("top-msg").textContent = e.message; }
     }
     render();

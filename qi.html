@@ -128,7 +128,7 @@
 
   <h2>To do before Cycle 1</h2>
   <ul>
-    <li>Move parent feedback from the Google Sheet to Microsoft Forms, with responses saved to Excel in an institutional OneDrive account. The QR code would open the form directly, so the website itself would send no data. The sections below describe the current Google setup.</li>
+    <li>Set up parent feedback in Microsoft Forms, with responses saved to an Excel sheet in an institutional OneDrive account.</li>
   </ul>
 
   <h2>How the website works</h2>
@@ -162,7 +162,7 @@
       <tr><th scope="row">Typed backup codes</th><td>Answers and a short tag made from the visit code, without comments</td><td>As long as the code is kept</td></tr>
       <tr><th scope="row">Clinic page</th><td>Merged results, in the tab's memory and in the address after <code>#</code></td><td>Until cleared or the tab is closed; see Known limits for what the browser may keep</td></tr>
       <tr><th scope="row">GitHub Pages</th><td>The ordinary request for each file, such as IP address, browser and path, without the part after <code>#</code></td><td>Set by GitHub</td></tr>
-      <tr><th scope="row">Google Sheet</th><td>Time, used paper Yes or No, and the two parent ratings</td><td>Once the feedback page opens, until removed from the sheet</td></tr>
+      <tr><th scope="row">Microsoft Forms and Excel sheet</th><td>Time, used paper Yes or No, and the two parent ratings</td><td>Once the form opens, until removed from the sheet</td></tr>
     </tbody>
   </table></div>
 
@@ -170,16 +170,16 @@
   <p>Links and QR codes carry a CRC-16 and the full visit code. Typed backup codes end in two check characters that catch any single wrong character, two swapped neighbors or any two wrong characters, and a random mistyped code gets through about 1 time in 1,000. These checks catch damage and typing errors, and they don't prove who wrote a result.</p>
 
   <h3>Parent feedback</h3>
-  <p><code>feedback.html</code> is separate from the forms and has no free-text box. It posts <code>usedPaper</code>, <code>easier</code> and <code>faster</code> to a Google Apps Script web app, which adds a time and appends one row to a Google Sheet. The script refuses any other field. A flag in <code>localStorage</code> limits each phone to one answer per 29 days.</p>
-  <p>The page isn't taking answers yet. Its web app address isn't set, so it shows "Not open yet" and sends nothing, and the clinic page's "Print feedback QR" button is turned off.</p>
+  <p>Parent feedback will use a Microsoft Form, separate from the rating forms. A printed QR code will open it directly, and responses will go to an Excel sheet in an institutional OneDrive account, so this website sends no feedback data.</p>
+  <p>The form isn't set up yet, and the clinic page's "Print feedback QR" button is turned off. The site's <code>feedback.html</code> page shows "Not open yet" and sends nothing.</p>
 
   <h3>Browser controls</h3>
   <ul>
-    <li><strong>Content Security Policy:</strong> scripts load from this site only, with no inline scripts. The form and clinic pages can connect only to this site. <code>feedback.html</code> also allows the two Google script hosts. Inline styles are allowed.</li>
+    <li><strong>Content Security Policy:</strong> scripts load from this site only, with no inline scripts. The form and clinic pages can connect only to this site. Inline styles are allowed.</li>
     <li><strong>Other tags:</strong> <code>no-referrer</code> on every page, and <code>noindex</code> on the form, clinic and feedback pages.</li>
     <li><strong>Delivery:</strong> GitHub Pages doesn't allow custom response headers, so these are <code>&lt;meta&gt;</code> tags, and directives that only work as headers, such as <code>frame-ancestors</code>, aren't in place.</li>
     <li><strong>Third-party code:</strong> the QR libraries are saved in this site and listed on <a href="credits.html">Credits</a>.</li>
-    <li><strong>Offline use:</strong> a service worker tries the network first and falls back to a saved copy of the site's own files.</li>
+    <li><strong>Offline use:</strong> a service worker tries the network first and falls back to a saved copy of the site's own files. It removes the part of an address after <code>#</code> before fetching or saving.</li>
   </ul>
 
   <h3>Clinic PIN</h3>
@@ -189,7 +189,6 @@
   <ul>
     <li><strong>No proof of who filled out a form.</strong> Without a server or sign-in, nothing stops a parent from changing a teacher's result, the same as a paper form the parent carries back. This is tracked as a balance measure.</li>
     <li><strong>Links are readable by whoever holds them.</strong> A link passes through whatever app carries it, such as a text message, email or MyChart, and it may stay in that browser's history.</li>
-    <li><strong>The service worker stores the full address.</strong> When a link is opened, the worker's saved copy of that page is stored under the address including the part after <code>#</code>, in the browser's Cache Storage on that device. The entry is replaced the next time that page loads.</li>
     <li><strong>Comments are free text.</strong> The optional comment box takes up to 200 characters and asks raters not to include names or other identifying details, but it can't enforce that.</li>
     <li><strong>No sign-in.</strong> Real sign-in would need hosting that can connect to an identity provider, which a static GitHub Pages site can't do.</li>
   </ul>

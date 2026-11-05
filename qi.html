@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>QI Project README: ADHD Rating Forms</title>
+<meta name="theme-color" content="#0D0D0C">
+<meta name="color-scheme" content="light dark">
+<!-- Keeps Night Mode in Brave on iPhone (Dark Reader) from overriding the site's light/dark switch. -->
+<meta name="darkreader-lock">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="shared.js?v=6"></script>
+<style>
+  :root { --page: #F4F4F5; --panel: #FFFFFF; --heading: #18181B; --body: #52525B; --border: #E4E4E7; --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --radius: 4px; --serif: Georgia, "Times New Roman", serif; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; } }
+  :root[data-theme="dark"] { --page: #141413; --panel: #1C1B19; --heading: #FAF9F6; --body: #C2BEB5; --border: #3A3833; --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--body); font: calc(16px * var(--tb, 1))/1.55 var(--serif); }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 64px 16px 32px; position: relative; }
+  .band h1 { font-weight: 500; font-size: calc(clamp(1.9rem, 6vw, 2.6rem) * var(--tb, 1)); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band .by { margin: 0; color: var(--band-muted); }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-size: calc(12px * var(--ts, 1));
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; font-family: var(--small-font); font-weight: 500; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; }
+  h2 { font-weight: 500; font-size: calc(1.4rem * var(--tb, 1)); color: var(--heading); margin: 32px 0 8px; }
+  h3 { font-weight: 600; font-size: calc(1.05rem * var(--tb, 1)); color: var(--heading); margin: 22px 0 6px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font-family: var(--mono); font-size: calc(14px * var(--tb, 1)); overflow-wrap: anywhere; }
+  .status { padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); color: var(--heading); }
+  .table-box { overflow-x: auto; margin: 0 0 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
+  table { width: 100%; border-collapse: collapse; font-size: calc(15px * var(--tb, 1)); line-height: 1.45; }
+  th, td { padding: 9px 11px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  tr:last-child > * { border-bottom: 0; }
+  th { color: var(--heading); font-weight: 600; }
+  .foot { margin-top: 32px; }
+  [hidden] { display: none !important; }
+  @media print {
+    :root, :root[data-theme], :root:not([data-theme="light"]) { --page: #FFF; --panel: #FFF; --heading: #000; --body: #000; --border: #999; --band: #FFF; --band-text: #000; --band-muted: #000; }
+    .band-inner { padding: 0 16px; }
+    .foot { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <a class="home" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Home</a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>QI Project README</h1>
+    <p class="by">ADHD Rating Forms</p>
+  </div>
+</header>
+<main class="wrap">
+  <p>This page covers the plan for the first improvement cycle on the NICHQ Vanderbilt ADHD rating forms, and how this website works.</p>
+  <p class="status"><strong>Status:</strong> Cycle 1 has not started. It needs a QIPR or IRB decision first, so there are no timing or rating results yet.</p>
+
+  <h2>The problem</h2>
+  <p>The Vanderbilt forms are on paper. Parents and teachers fill them out separately, families carry them back to clinic, and a physician scores each form by hand and writes the results into the Epic note. One visit can need forms from up to two parents and two teachers.</p>
+
+  <h2>Goal</h2>
+  <p>Decrease the mean physician time to score one Vanderbilt follow-up form and enter the results into Epic by 50% from baseline by 6/30/27.</p>
+
+  <h2>Cycle 1</h2>
+  <p>The project uses Plan, Do, Study, Act cycles. Cycle 1 tests the follow-up form only, with physicians scoring follow-up forms in the pediatric clinic.</p>
+  <h3>Plan</h3>
+  <div class="table-box"><table>
+    <thead><tr><th scope="col">Phase</th><th scope="col">What happens</th><th scope="col">Sample</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">1. Paper baseline</th><td>At each follow-up visit, time the physician from starting to score a paper form to finishing the results in Epic.</td><td>10 timed forms</td></tr>
+      <tr><th scope="row">2. Website</th><td>Give families a follow-up handout with a QR code for the parent form and two tear-off teacher strips. Time the same steps using the clinic page.</td><td>10 timed forms</td></tr>
+    </tbody>
+  </table></div>
+  <p>The sample follows the QI guide, which says a run chart usually needs 10 to 12 points.</p>
+  <p>The same timing method is used in both phases, and each time is written down. The clinic page's own "Time to score" timer can't serve as the study measure: it runs from page open or Clear to the first report, so it includes PIN entry and stops before the results reach Epic, and it isn't saved.</p>
+  <p><strong>Expected result:</strong> less time on the website than on paper, and a first look at how the website fits into a real follow-up visit.</p>
+  <h3>Do, Study, Act</h3>
+  <p>These are completed after the cycle runs. Later cycles will be planned from what Cycle 1 shows.</p>
+
+  <h2>Measures</h2>
+  <h3>Outcome</h3>
+  <p>Mean time to score one follow-up form and enter the results into Epic, on paper compared with the website.</p>
+  <h3>Physician and parent ratings</h3>
+  <p>Physicians and parents answer matching questions. The physician speed rating records how quick scoring felt, alongside the measured time. The mean of each rating is tracked per cycle.</p>
+  <div class="table-box"><table>
+    <thead><tr><th scope="col">Item</th><th scope="col">Physicians</th><th scope="col">Parents</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Who answers</th><td>Physicians who scored forms in both phases</td><td>Parents who used the website and have filled out the paper form before</td></tr>
+      <tr><th scope="row">Ease of use</th><td>"Compared to the paper form, this website was easier to score."</td><td>"Compared to the paper form, this website was easier to fill out."</td></tr>
+      <tr><th scope="row">Speed</th><td>"Compared to the paper form, this website was faster to score."</td><td>"Compared to the paper form, this website was faster to fill out."</td></tr>
+      <tr><th scope="row">Ease scale</th><td colspan="2">1 = The paper was easier, 3 = They are the same, 5 = The website was easier</td></tr>
+      <tr><th scope="row">Speed scale</th><td colspan="2">1 = The paper was faster, 3 = They are the same, 5 = The website was faster</td></tr>
+      <tr><th scope="row">Current state</th><td>Planned. The website has no physician rating form yet, and the wording above is a draft.</td><td>The page is built but not taking answers yet (see Parent feedback below).</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Process</h3>
+  <ul>
+    <li>Follow-up visits using the website, out of all follow-up visits using Vanderbilt forms.</li>
+    <li>Teacher forms returned by the visit, out of teacher forms expected.</li>
+    <li>Parents who have filled out the paper form, out of all parents answering the feedback page.</li>
+  </ul>
+  <p>The website stores no visit data, so the first two are counted by hand.</p>
+  <h3>Balance</h3>
+  <ul>
+    <li>Staff burden from printing handouts, writing the visit code in the chart and entering the PIN.</li>
+    <li>Families who needed paper, out of all families offered the website. The parent form is filled out on a phone and the forms are in English only, so families without a smartphone or with limited English could be left out.</li>
+    <li>Suspected or reported changes to a teacher's result (see Known limits below).</li>
+  </ul>
+
+  <h2>Still to be decided before Cycle 1</h2>
+  <ul>
+    <li>The clinic site and which physicians take part.</li>
+    <li>Who times the forms, and who counts the process measures.</li>
+    <li>How physician ratings are collected.</li>
+    <li>How families without a smartphone or with limited English are served, such as keeping paper forms available.</li>
+    <li>How staff burden is asked about, and how to hear from families who stayed on paper.</li>
+  </ul>
+
+  <h2>How the website works</h2>
+  <p>The site is static HTML, CSS and JavaScript on GitHub Pages, with no build step, and all form logic runs in the browser. It has no application server, database, user accounts or analytics. The <a href="https://github.com/adhd-forms/adhd-forms.github.io">source code</a> is public. Hosting is free and handouts print from the clinic page, so the site can keep running at no added cost.</p>
+  <div class="table-box"><table>
+    <thead><tr><th scope="col">Page</th><th scope="col">Used by</th><th scope="col">Purpose</th></tr></thead>
+    <tbody>
+      <tr><th scope="row"><code>/</code></th><td>Parents and teachers</td><td>Parents fill out their form on a phone, and teachers use a phone or computer. Every question is required, and scores aren't shown.</td></tr>
+      <tr><th scope="row"><code>clinic.html</code></th><td>Physicians, behind a PIN</td><td>Prints handouts, takes in results, merges them by visit code, scores them and writes a note for Epic.</td></tr>
+      <tr><th scope="row"><code>feedback.html</code></th><td>Parents</td><td>Asks the three parent feedback questions. This is the only page written to send data.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>From handout to Epic</h3>
+  <ol>
+    <li>The clinic page generates a visit code of 8 random symbols with <code>crypto.getRandomValues</code> and prints a handout with QR invite links for the parent and two teachers. An invite holds only the visit code, the form type, who the form is for, such as Teacher 1, and whether the teachers were given paper strips. The forms don't ask for names or dates of birth, and the visit code is written in the chart.</li>
+    <li>The rater's browser loads the form and saves answers as a draft in <code>localStorage</code>.</li>
+    <li>On finishing, the page packs the answers into a compact binary payload with a CRC-16 and encodes it as base64url after the <code>#</code> in a link. Browsers don't send that part of a URL in web requests. The same link is drawn as a QR code, and a typed backup code is offered for when a link or camera can't be used.</li>
+    <li>A teacher's result reaches the parent through the phone's share sheet, a copied link, a QR scan or a printed page. The parent's phone merges results by visit code into one packet.</li>
+    <li>The parent pastes the packet link into a MyChart message or brings the phone to the visit.</li>
+    <li>The physician opens the link, scans the QR code or enters the visit code and typed codes. Camera frames are read in the browser, by <code>BarcodeDetector</code> where available and otherwise by the bundled jsQR library.</li>
+    <li>The clinic page scores the results in the browser using the rules from the printed NICHQ scoring instructions, shows one report and offers a plain-text note. The physician copies the note into Epic.</li>
+  </ol>
+
+  <h3>Where the data sits</h3>
+  <div class="table-box"><table>
+    <thead><tr><th scope="col">Place</th><th scope="col">What it holds</th><th scope="col">How long</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Rater's browser</th><td>Drafts and the parent's packet, in <code>localStorage</code></td><td>Cleared 29 days after the last change, or with "Clear from this device"</td></tr>
+      <tr><th scope="row">Links and QR codes</th><td>Answers and any comment, encoded but not encrypted</td><td>As long as the message, printout or screen holding them is kept</td></tr>
+      <tr><th scope="row">Typed backup codes</th><td>Answers and a short tag made from the visit code, without comments</td><td>As long as the code is kept</td></tr>
+      <tr><th scope="row">Clinic page</th><td>Merged results, in the tab's memory and in the address after <code>#</code></td><td>Until cleared or the tab is closed; see Known limits for what the browser may keep</td></tr>
+      <tr><th scope="row">GitHub Pages</th><td>The ordinary request for each file, such as IP address, browser and path, without the part after <code>#</code></td><td>Set by GitHub</td></tr>
+      <tr><th scope="row">Google Sheet</th><td>Time, used paper Yes or No, and the two parent ratings</td><td>Once the feedback page opens, until removed from the sheet</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Checks on links and codes</h3>
+  <p>Links and QR codes carry a CRC-16 and the full visit code. Typed backup codes end in two check characters that catch any single wrong character, two swapped neighbors or any two wrong characters, and a random mistyped code gets through about 1 time in 1,000. These checks catch damage and typing errors, and they don't prove who wrote a result.</p>
+
+  <h3>Parent feedback</h3>
+  <p><code>feedback.html</code> is separate from the forms and has no free-text box. It posts <code>usedPaper</code>, <code>easier</code> and <code>faster</code> to a Google Apps Script web app, which adds a time and appends one row to a Google Sheet. The script refuses any other field. A flag in <code>localStorage</code> limits each phone to one answer per 29 days.</p>
+  <p>The page isn't taking answers yet. Its web app address isn't set, so it shows "Not open yet" and sends nothing, and the clinic page's "Print feedback QR" button is turned off.</p>
+
+  <h3>Browser controls</h3>
+  <ul>
+    <li><strong>Content Security Policy:</strong> scripts load from this site only, with no inline scripts. The form and clinic pages can connect only to this site. <code>feedback.html</code> also allows the two Google script hosts. Inline styles are allowed.</li>
+    <li><strong>Other tags:</strong> <code>no-referrer</code> on every page, and <code>noindex</code> on the form, clinic and feedback pages.</li>
+    <li><strong>Delivery:</strong> GitHub Pages doesn't allow custom response headers, so these are <code>&lt;meta&gt;</code> tags, and directives that only work as headers, such as <code>frame-ancestors</code>, aren't in place.</li>
+    <li><strong>Third-party code:</strong> the QR libraries are saved in this site and listed on <a href="credits.html">Credits</a>.</li>
+    <li><strong>Offline use:</strong> a service worker tries the network first and falls back to a saved copy of the site's own files.</li>
+  </ul>
+
+  <h3>Clinic PIN</h3>
+  <p>The PIN is a convenience gate, not security. It keeps the clinic tools out of families' way. The browser compares a salted SHA-256 hash of the entry with a hash in the public source, and a 4-digit PIN can be worked out from that hash. The unlock is saved in <code>localStorage</code>. The clinic page holds no results until someone adds them, so the PIN isn't what protects the data.</p>
+
+  <h3>Known limits</h3>
+  <ul>
+    <li><strong>No proof of who filled out a form.</strong> Without a server or sign-in, nothing stops a parent from changing a teacher's result, the same as a paper form the parent carries back. This is tracked as a balance measure.</li>
+    <li><strong>Links are readable by whoever holds them.</strong> A link passes through whatever app carries it, such as a text message, email or MyChart, and it may stay in that browser's history.</li>
+    <li><strong>The service worker stores the full address.</strong> When a link is opened, the worker's saved copy of that page is stored under the address including the part after <code>#</code>, in the browser's Cache Storage on that device. The entry is replaced the next time that page loads.</li>
+    <li><strong>Comments are free text.</strong> The optional comment box takes up to 200 characters and asks raters not to include names or other identifying details, but it can't enforce that.</li>
+    <li><strong>No sign-in.</strong> Real sign-in would need hosting that can connect to an identity provider, which a static GitHub Pages site can't do.</li>
+  </ul>
+
+  <p class="foot"><a href="credits.html">Credits</a></p>
+</main>
+<script src="credits.js"></script>
+</body>
+</html>

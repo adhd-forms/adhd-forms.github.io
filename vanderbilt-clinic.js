@@ -62,8 +62,9 @@
   $("add-go").addEventListener("click", () => {
     const text = $("add-in").value;
     if (isScared(text) || scaredOpen()) {
-      $("add-msg").textContent = packet || !isScared(text) ? CLEAR_FIRST : SC.take(text, $("visit-in").value);
-      $("add-in").value = "";
+      const msg = packet || !isScared(text) ? CLEAR_FIRST : SC.take(text, $("visit-in").value);
+      $("add-msg").textContent = msg;
+      if (msg.endsWith(" results added.")) $("add-in").value = ""; // a refused code stays in the box (owner, 2026-11-05)
       return;
     }
     let d;

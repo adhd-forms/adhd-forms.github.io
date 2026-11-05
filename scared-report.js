@@ -42,7 +42,8 @@
       return String(vars[k]);
     });
   }
-  function status(sum, cutoff) { return fill(sum >= cutoff ? NOTE.statusAtOrAbove : NOTE.statusBelow, { cutoff: cutoff }); }
+  // At or above the cutoff is decided by score() alone (owner, 2026-11-05).
+  function status(atOrAbove, cutoff) { return fill(atOrAbove ? NOTE.statusAtOrAbove : NOTE.statusBelow, { cutoff: cutoff }); }
 
   function noteText(report) {
     const lines = [fill(NOTE.header, { visit: report.visitShown })];
@@ -51,9 +52,9 @@
       if (!f) { lines.push(fill(NOTE.notReturned, { form: name })); return; }
       if (!f.result) { lines.push(fill(NOTE.unreadable, { form: name })); return; }
       const t = f.result.total;
-      let st = status(t.sum, t.cutoff);
+      let st = status(t.atOrAbove, t.cutoff);
       if (t.moreSpecific) st += fill(NOTE.moreSpecific, { above: S.RULES.total.moreSpecificAbove });
-      const subs = f.result.subscales.map(s => fill(NOTE.subscale, { label: s.label, sum: s.sum, max: s.max, status: status(s.sum, s.cutoff) }));
+      const subs = f.result.subscales.map(s => fill(NOTE.subscale, { label: s.label, sum: s.sum, max: s.max, status: status(s.atOrAbove, s.cutoff) }));
       lines.push(fill(NOTE.formLine, { form: name, sum: t.sum, max: report.totalMax, status: st, subscales: subs.join(", ") }));
     });
     const T = S.RULES.total;

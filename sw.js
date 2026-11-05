@@ -4,16 +4,16 @@
 // Answers live after "#" in links and in localStorage. Browsers don't send the "#" part, but req.url includes it,
 // so it is removed before anything is fetched or saved.
 // Any ?v= bump, new or renamed file: update PRECACHE with the exact URL the page requests and bump CACHE.
-const CACHE = "adhd-forms-v21";
+const CACHE = "adhd-forms-v22";
 const PRECACHE = [
   "/", "/clinic.html", "/credits.html", "/credits.js", "/feedback.html", "/feedback.js?v=1", "/qi.html",
   "/manifest.webmanifest", "/clinic.webmanifest",
   "/shared.js?v=6", "/fonts/atkinson-hyperlegible-next-latin.woff2",
   "/vanderbilt-forms.js?v=3", "/vanderbilt-score.js?v=2", "/vanderbilt-codes.js?v=4",
   "/vanderbilt-strings-en.js?v=8", "/vanderbilt-page.js?v=11", "/vanderbilt-note-template.js?v=2",
-  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=12", "/vanderbilt-scan.js?v=2",
+  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=13", "/vanderbilt-scan.js?v=2",
   "/scared.html", "/scared-forms.js?v=1", "/scared-score.js?v=1", "/scared-codes.js?v=1", "/scared-page.js?v=2",
-  "/scared-note-template.js?v=1", "/scared-report.js?v=1", "/scared-clinic.js?v=2",
+  "/scared-note-template.js?v=2", "/scared-report.js?v=2", "/scared-clinic.js?v=3",
   "/vendor/qrcode-generator-2.0.4.js", "/vendor/jsQR-1.4.0.js",
   "/favicon.svg", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png", "/icon-maskable-512.png",
 ];

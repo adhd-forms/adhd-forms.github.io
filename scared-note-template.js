@@ -15,8 +15,9 @@
     // One line per form. {subscales} = each subscale as below, joined with ", ".
     formLine: "{form} report: total {sum}/{max} ({status}). {subscales}.",
     subscale: "{label} {sum}/{max} ({status})",
-    statusAtOrAbove: "at or above {cutoff}",
-    statusBelow: "below {cutoff}",
+    // "positive" and "negative" are the owner's words (2026-11-05).
+    statusAtOrAbove: "positive, at or above {cutoff}",
+    statusBelow: "negative, below {cutoff}",
     moreSpecific: ", higher than {above}",
     notReturned: "{form} report: not returned.",
     unreadable: "{form} report: could not be read.",

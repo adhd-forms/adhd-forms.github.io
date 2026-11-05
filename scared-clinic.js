@@ -44,8 +44,8 @@
     const forms = ["parent", "child"].map(id => rep.forms.find(f => f.form === id));
     const head = el("tr");
     head.append(el("th", null, "Scale"), el("th", null, "Cutoff"), el("th", null, "Parent"), el("th", null, "Child"));
-    const rows = [{ label: "Total", indicates: S.RULES.total.indicates, cutoff: S.RULES.total.cutoff, max: rep.totalMax, pick: res => res.total }]
-      .concat(S.RULES.subscales.map((s, i) => ({ label: s.label, indicates: s.indicates, cutoff: s.cutoff, max: s.items.length * 2, pick: res => res.subscales[i] })));
+    const rows = [{ label: "Total", indicates: S.RULES.total.indicates, cutoff: S.RULES.total.cutoff, pick: res => Object.assign({ max: rep.totalMax }, res.total) }]
+      .concat(S.RULES.subscales.map((s, i) => ({ label: s.label, indicates: s.indicates, cutoff: s.cutoff, pick: res => res.subscales[i] })));
     const tb = el("table");
     tb.append(head);
     rows.forEach(r => {
@@ -55,8 +55,9 @@
       forms.forEach(f => {
         if (!f) return tr.append(el("td", "v", "–"));
         if (!f.result) return tr.append(el("td", "v", "could not be read"));
-        const x = r.pick(f.result), at = x.sum >= r.cutoff;
-        tr.append(el("td", "v" + (at ? " pos" : ""), x.sum + "/" + r.max + (at ? " at or above" : "")));
+        // max and atOrAbove come from score() (the total's max from the report).
+        const x = r.pick(f.result), at = x.atOrAbove;
+        tr.append(el("td", "v" + (at ? " pos" : ""), x.sum + "/" + x.max + (at ? " at or above" : "")));
       });
       tb.append(tr);
     });

@@ -47,6 +47,10 @@
     doneSend: "Send",
     doneCopy: "Copy link",
     doneCopied: "Copied",
+    // Done screen: the other form for this visit (owner, 2026-11-05; wording Claude's, for the owner's review).
+    otherFill: "Fill in the {form} form on this phone",
+    otherShow: "Show the {form}'s QR code",
+    doneOtherHint: "Or each person can use their own phone: the clinic scans both QR codes.",
     msgSend: "Here are my answers to the SCARED form for visit {visit}: {link}",
     resultLinkNote: "This is a results link. Bring it to the clinic.",
     clinicianLink: "Clinician? Open the report",
@@ -271,7 +275,11 @@
     $("qr-tap").setAttribute("aria-label", t("qrFullAria"));
     $("done-code").textContent = C.toTyped({ visit: st.visit, form: st.form, answers: st.answers });
     $("done-link").textContent = link;
+    const other = st.form === "parent" ? "child" : "parent", key = st.visit + ":" + other, saved = loadAll()[key];
+    $("done-other").textContent = t(usable(key, saved) && saved.submitted ? "otherShow" : "otherFill", { form: other });
   }
+  // Opens the other form for the same visit: its saved place, or its Done screen if it was submitted here.
+  $("done-other").addEventListener("click", () => { begin(st.visit, st.form === "parent" ? "child" : "parent"); scrollTo(0, 0); });
   function copyLink() {
     const text = $("done-link").textContent, btn = $("done-copy");
     const ok = () => { btn.textContent = t("doneCopied"); setTimeout(() => { btn.textContent = t("doneCopy"); }, 1500); };
@@ -359,6 +367,15 @@
       } catch (e) { $("top-msg").textContent = e.message; }
     }
     render();
+  }
+
+  // Page-load intro (CSS-run, as on the other family page): a tap or any key skips it; removed once it has faded.
+  const intro = $("intro");
+  if (intro) {
+    const endIntro = () => { intro.remove(); removeEventListener("keydown", endIntro); };
+    intro.addEventListener("animationend", e => { if (e.target === intro) endIntro(); });
+    intro.addEventListener("click", endIntro);
+    addEventListener("keydown", endIntro);
   }
 
   $("attr").textContent = F.ATTRIBUTION;

@@ -1,6 +1,6 @@
 /* SCARED (Screen for Child Anxiety Related Disorders) parent and child forms as data (no scoring, no page code).
    Loaded by the SCARED pages before their own script:
-     <script src="scared-forms.js?v=1"></script>
+     <script src="scared-forms.js?v=2"></script>
    Exposes only window.PedsScaredForms (frozen). Bump ?v= on every page that loads it whenever
    this file changes, and update sw.js PRECACHE once a page links it.
 
@@ -8,7 +8,8 @@
    Vanderbilt, Milestones and Validation). Changes from the print, and only these: child item 11
    reads "I get stomachaches at school" (printed "My I get ...", corrected by the owner, 2026-11-05);
    line-break hyphens, double spaces and wrapped lines are undone; the "*" before the child form's
-   note is dropped, since it points to nothing on the form. The owner approved these, 2026-11-05.
+   note is dropped, since it points to nothing on the form; the directions say "click a button" instead of
+   "fill in one circle" (owner, 2026-11-05, for the phone page). The owner approved these, 2026-11-05.
    The Name and Date lines and the page numbers are left out on purpose. Scoring rules are a separate file.
    Chart note: .claude/chart/2026-11-05-scared-forms-scoring.md (notes repo). */
 (function () {
@@ -25,6 +26,7 @@
   ];
 
   // medical-data. Source: SCARED, Birmaher et al., 10/95, owner's PDF, printed pages 41-44
+  // Directions say "click a button" instead of the printed "fill in one circle" (owner, 2026-11-05).
   // Checked word for word against the paper forms by the owner, 2026-11-05.
   const FORMS = {
     parent: {
@@ -32,7 +34,7 @@
       title: TITLE,
       version: "Parent Version",
       fillBy: "To be filled out by the PARENT",
-      directions: "Below is a list of statements that describe how people feel. Read each statement carefully and decide if it is “Not True or Hardly Ever True” or “Somewhat True or Sometimes True” or “Very True or Often True” for your child. Then for each statement, fill in one circle that corresponds to the response that seems to describe your child for the last 3 months. Please respond to all statements as well as you can, even if some do not seem to concern your child.",
+      directions: "Below is a list of statements that describe how people feel. Read each statement carefully and decide if it is “Not True or Hardly Ever True” or “Somewhat True or Sometimes True” or “Very True or Often True” for your child. Then for each statement, click a button that corresponds to the response that seems to describe your child for the last 3 months. Please respond to all statements as well as you can, even if some do not seem to concern your child.",
       items: [
         { n: 1, text: "When my child feels frightened, it is hard for him/her to breathe" },
         { n: 2, text: "My child gets headaches when he/she is at school" },
@@ -82,7 +84,7 @@
       title: TITLE,
       version: "Child Version",
       fillBy: "To be filled out by the CHILD",
-      directions: "Below is a list of sentences that describe how people feel. Read each phrase and decide if it is “Not True or Hardly Ever True” or “Somewhat True or Sometimes True” or “Very True or Often True” for you. Then for each sentence, fill in one circle that corresponds to the response that seems to describe you for the last 3 months.",
+      directions: "Below is a list of sentences that describe how people feel. Read each phrase and decide if it is “Not True or Hardly Ever True” or “Somewhat True or Sometimes True” or “Very True or Often True” for you. Then for each sentence, click a button that corresponds to the response that seems to describe you for the last 3 months.",
       note: "For children ages 8 to 11, it is recommended that the clinician explain all questions, or have the child answer the questionnaire sitting with an adult in case they have any questions.",
       items: [
         { n: 1, text: "When I feel frightened, it is hard for me to breathe" },

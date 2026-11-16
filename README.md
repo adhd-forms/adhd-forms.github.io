@@ -28,4 +28,13 @@ The Screen for Child Anxiety Related Disorders (SCARED), parent and child versio
 - Links: `scared.html#a…` opens a form, `scared.html#s…` carries a finished one. Backup codes are 18 characters (`XXXX-XXXX-XXXX-XXXX-XX`), with the visit code entered once at the clinic.
 - Files: `scared-forms.js` (questions), `scared-score.js` (scoring), `scared-codes.js` (links and backup codes), `scared-page.js`, `scared-report.js`, `scared-note-template.js` (the note's wording) and `scared-clinic.js`.
 
+## OS-CBS challenging behavior form
+
+The Open Source – Challenging Behavior Scale (OS-CBS), version 220309: 18 items, answered by a parent/caregiver or a teacher about a child or teen aged 2 to 17. A freely available, open-source measure (Frazier et al., J Autism Dev Disord 2023).
+
+- `oscbs.html`: the form page, opened from the printed handout's QR codes (one page per family, a new visit code, a parent/caregiver code and a teacher code). Every question is required; the device's date at Submit goes into the result as the completion date. Families and teachers never see scores.
+- `clinic.html`: reads OS-CBS links, QR codes and backup codes too, and shows the parent/caregiver and teacher results side by side: the total and five subscale sums with their ranges and item means (0-4, as in the official scoring workbook), and the high-risk items at or above their flag level. There are no cutoffs or interpretive labels.
+- Links: `oscbs.html#o…` opens a form, `oscbs.html#b…` carries a finished one. Backup codes are 16 characters (`XXXX-XXXX-XXXX-XXXX`), with the visit code entered once at the clinic.
+- Files: `oscbs-forms.js` (questions), `oscbs-score.js` (scoring and the safety-flag settings), `oscbs-codes.js` (links and backup codes), `oscbs-page.js`, `oscbs-report.js`, `oscbs-note-template.js` (the note's wording) and `oscbs-clinic.js`.
+
 Third-party code, saved unchanged in `vendor/`: qrcode-generator 2.0.4 (MIT) and jsQR 1.4.0 (Apache License 2.0). See `credits.html`.

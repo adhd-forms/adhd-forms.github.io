@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Privacy (owner's spec): answers live only in the page and in links after "#". No third-party
+     scripts or fonts, no inline scripts, no referrer. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Open Source – Challenging Behavior Scale (OS-CBS)</title>
+<meta name="theme-color" content="#0D0D0C">
+<!-- The site draws its own dark mode, so phone browsers don't force theirs (it turned the QR's white background dark). -->
+<meta name="color-scheme" content="light dark">
+<!-- Night Mode in Brave on iPhone (Dark Reader) stays off here, so the site's own light/dark switch decides (owner, 2026-11-03). -->
+<meta name="darkreader-lock">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="shared.js?v=6"></script>
+<style>
+  /* Same tokens as Pediatric Tools. System fonts only (no web fonts on this site). */
+  :root {
+    --page: #F4F4F5; --panel: #FFFFFF; --soft: #FAFAFA;
+    --brand: #232323; --brand-text: #FFFFFF;
+    --band: #232323; --band-text: #FFFFFF; --band-muted: #A1A1AA;
+    --heading: #18181B; --body: #52525B; --border: #E4E4E7; --subtle: #F2F2F2;
+    --warn-bg: #FEF2F2; --warn-border: #FCA5A5; --warn-text: #7F1D1D;
+    /* control edges at 3:1 or more against the card; grey fill for Back / Review Questions (owner, 2026-10-24) */
+    --edge: #8A8A93; --nav: #E4E4E7; --track: #8A8A93; --dis-text: #6B6B73;
+    --focus: #161616; --radius: 4px;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+      --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+      --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
+      --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #141413; --panel: #1C1B19; --soft: #242320; --brand: #FAF9F6; --brand-text: #141413;
+    --band: #0D0D0C; --band-text: #FAF9F6; --band-muted: #A8A49B; --heading: #FAF9F6; --body: #C2BEB5;
+    --border: #3A3833; --subtle: #2C2B27; --warn-bg: #2A1A17; --warn-border: #7A2E26; --warn-text: #F3CFC6; --focus: #FAF9F6;
+    --edge: #7A766C; --nav: #3A3833; --track: #7A766C; --dis-text: #9A968C;
+  }
+  :root { color-scheme: light dark; } :root[data-theme="light"] { color-scheme: light; } :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--body); font: calc(16px * var(--tb, 1))/1.55 var(--sans); }
+  strong, b { color: var(--heading); font-weight: 600; }
+  a { color: var(--heading); }
+  .band { background: var(--band); color: var(--band-text); }
+  .band-inner { max-width: 900px; margin: 0 auto; padding: 40px 16px 32px; position: relative; }
+  header.band .band-inner { padding-top: 64px; }
+  .band h1 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; font-size: calc(clamp(1.9rem, 6vw, 2.6rem) * var(--tb, 1)); line-height: 1.08; margin: 0 0 10px; color: var(--band-text); }
+  .band .by { margin: 0; color: var(--band-muted); }
+  .theme-toggle { position: absolute; top: 12px; right: 16px; min-height: 40px; padding: 6px 12px; font-size: calc(12px * var(--ts, 1)); font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--band-text); background: transparent; border: 1px solid var(--band-muted); border-radius: var(--radius); cursor: pointer; font-family: var(--small-font); }
+  footer.band .band-inner { padding: 28px 16px 36px; font-size: calc(13px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
+  footer.band p { margin: 0 0 8px; color: var(--band-muted); }
+  footer.band a { color: inherit; text-underline-offset: 2px; }
+  footer.band .sprite-credit { margin-top: 14px; font-size: calc(12px * var(--ts, 1)); font-family: var(--small-font); font-weight: 500; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: calc(1.5rem * var(--tb, 1)); color: var(--heading); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
+    background: var(--brand); color: var(--brand-text); cursor: pointer; }
+  .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
+  .btn:disabled { background: var(--subtle); color: var(--dis-text); border-color: var(--edge); cursor: not-allowed; }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  button:focus-visible, a:focus-visible, input:focus-visible, input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .hint { font-size: calc(14.5px * var(--tb, 1)); margin: 6px 0 0; }
+  .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
+  [hidden] { display: none !important; }
+  label.field { display: block; margin: 14px 0 6px; color: var(--heading); }
+  input[type=text] { font: inherit; font-family: var(--mono); font-size: calc(20px * var(--tb, 1)); letter-spacing: .08em; text-transform: uppercase; width: 100%; max-width: 280px;
+    min-height: 48px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
+
+  /* choice pills (radio inputs styled as buttons) */
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label { display: flex; align-items: center; min-height: 48px; padding: 10px 12px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); cursor: pointer; color: var(--heading); line-height: 1.3; }
+  .choices input:checked + label { background: var(--brand); color: var(--brand-text); border-color: var(--brand); }
+  fieldset { border: 0; padding: 0; margin: 16px 0 0; } legend { color: var(--heading); margin-bottom: 8px; padding: 0; }
+
+  /* one question per screen */
+  .bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--brand); width: 0; transition: width .2s; }
+  .progress { font-size: calc(13px * var(--ts, 1)); margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
+  .section-line { font-size: calc(14.5px * var(--tb, 1)); margin: 14px 0 4px; }
+  .qtext { font-family: var(--serif); font-size: calc(1.45rem * var(--tb, 1)); line-height: 1.3; color: var(--heading); margin: 6px 0 0; }
+  .qhead { height: calc(12rem * var(--tb, 1)); overflow: hidden; margin-bottom: 14px; }
+  .wide-btn { width: 100%; }
+  .bottom-link { margin: 14px 0 0; font-size: calc(14.5px * var(--tb, 1)); }
+  .qtext:focus { outline: none; }
+  .answers { display: grid; gap: 10px; }
+  .answers button { font: inherit; font-size: calc(18px * var(--tb, 1)); text-align: left; min-height: 56px; padding: 12px 16px; border: 1px solid var(--edge); border-radius: var(--radius);
+    background: var(--panel); color: var(--heading); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  /* Selected answer: thick outline and a check mark, not a filled block (owner, 2026-10-24). The 3px border takes 2px of padding, so nothing moves. */
+  .answers button.picked { border: 3px solid var(--brand); padding: 10px 14px; font-weight: 600; }
+  .answers button.picked::after { content: ""; flex: none; width: 26px; height: 26px; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5l4 4 8-9'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5l4 4 8-9'/%3E%3C/svg%3E") center / contain no-repeat; }
+  .nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+
+  /* review */
+  .review-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .review-list button { font: inherit; width: 100%; text-align: left; display: grid; grid-template-columns: 2.4em 1fr; gap: 4px 8px; padding: 10px 8px; min-height: 48px;
+    background: transparent; border: 0; border-bottom: 1px solid var(--border); color: var(--body); cursor: pointer; }
+  .review-list .n { font-size: calc(13px * var(--ts, 1)); color: var(--heading); padding-top: 2px; font-family: var(--small-font); font-weight: 500; }
+  .review-list .a { grid-column: 2; color: var(--heading); }
+  .review-list .skipped { background: var(--warn-bg); }
+  .review-list .skipped .a { color: var(--warn-text); }
+  .review-head { margin: 4px 0 0; }
+  .review-head.warn { color: var(--warn-text); }
+
+  /* done */
+  .code { font-family: var(--mono); font-size: calc(clamp(1.15rem, 5.4vw, 1.6rem) * var(--tb, 1)); letter-spacing: .04em; color: var(--heading); overflow-wrap: anywhere;
+    background: var(--soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 6px 0; user-select: all; }
+  .link { font-size: calc(12px * var(--ts, 1)); overflow-wrap: anywhere; margin: 8px 0 0; font-family: var(--small-font); font-weight: 500; }
+  .visit { font-family: var(--mono); color: var(--heading); }
+
+  .qr { forced-color-adjust: none; background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
+  .qr-tap { display: inline-block; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
+  .qr-tap:disabled { cursor: default; }
+  /* Full view of a QR: white in both themes, as large as the screen allows */
+  #qr-full { position: fixed; inset: 0; z-index: 50; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
+  #qr-full[hidden] { display: none; }
+  #qr-full-box img { display: block; image-rendering: pixelated; width: min(calc(100vw - 32px), calc(100vh - 120px)); height: auto; }
+  #qr-close { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); min-height: 48px; padding: 10px 28px; border: 1px solid #000000; border-radius: var(--radius); background: #000000; color: #FFFFFF; cursor: pointer; }
+  #qr-close:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }
+  .qr img { width: min(78vw, 320px); height: auto; display: block; image-rendering: pixelated; }
+
+  /* Page-load intro (owner, 2026-10-30; family pages; SCARED and OS-CBS): the logo's clipboard, each row's box ticked
+     pixel by pixel, then the clipboard fades quickly and the screen fades into the page. CSS runs it all;
+     oscbs-page.js only lets a tap or key skip it and removes it when done. */
+  #intro { position: fixed; inset: 0; z-index: 100; background: #0D0D0C; display: grid; place-items: center; cursor: pointer;
+    animation: intro-out .2s ease .8s forwards; }
+  #intro svg { width: min(56vw, 34vh, 240px); height: auto; animation: intro-in .12s ease-out both, intro-gone .1s ease-in .7s forwards; }
+  #intro .ib, #intro .ix { fill: #FAF9F6; }
+  #intro rect { fill: #E5484D; opacity: 0; animation: intro-px .01s linear forwards; }
+  #intro .r1 .ix { animation: intro-gone .06s ease-in .12s forwards; }
+  #intro .r2 .ix { animation: intro-gone .06s ease-in .27s forwards; }
+  #intro .r3 .ix { animation: intro-gone .06s ease-in .42s forwards; }
+  #intro .r4 .ix { animation: intro-gone .06s ease-in .57s forwards; }
+  @keyframes intro-in { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+  @keyframes intro-gone { to { opacity: 0; } }
+  @keyframes intro-px { to { opacity: 1; } }
+  @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
+
+  @media (prefers-reduced-motion: reduce) { .bar span { transition: none; } #intro { display: none; } }
+  @media print {
+    :root, :root[data-theme="dark"], :root[data-theme="light"], :root:not([data-theme="light"]) {
+      --page:#FFF; --panel:#FFF; --soft:#FFF; --subtle:#EEE; --heading:#000; --body:#222; --border:#999; --band:#FFF; --band-text:#000; --band-muted:#333;
+      --brand:#000; --brand-text:#FFF; --edge:#999; --nav:#FFF; --track:#EEE;
+    }
+    .theme-toggle, .home, .noprint, #intro { display: none !important; }
+  }
+
+  /* setup: the printed "Instructions:" heading; "past month" is underlined as printed */
+  .dir-head { margin: 14px 0 4px; color: var(--heading); font-weight: 600; }
+  .note { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
+  .qr-wrap { margin: 14px 0 0; }
+</style>
+</head>
+<body>
+<div id="intro" aria-hidden="true">
+  <svg viewBox="8 5 32 40" shape-rendering="crispEdges">
+    <path class="ib" d="M17 6h14v1h-14zM17 7h14v1h-14zM17 8h4v1h-4zM27 8h4v1h-4zM17 9h4v1h-4zM27 9h4v1h-4zM9 10h30v1h-30zM9 11h30v1h-30zM9 12h2v1h-2zM17 12h2v1h-2zM29 12h2v1h-2zM37 12h2v1h-2zM9 13h2v1h-2zM17 13h2v1h-2zM29 13h2v1h-2zM37 13h2v1h-2zM9 14h2v1h-2zM37 14h2v1h-2zM9 15h2v1h-2zM37 15h2v1h-2zM9 16h2v1h-2zM23 16h12v1h-12zM37 16h2v1h-2zM9 17h2v1h-2zM23 17h12v1h-12zM37 17h2v1h-2zM9 18h2v1h-2zM37 18h2v1h-2zM9 19h2v1h-2zM37 19h2v1h-2zM9 20h2v1h-2zM37 20h2v1h-2zM9 21h2v1h-2zM37 21h2v1h-2zM9 22h2v1h-2zM37 22h2v1h-2zM9 23h2v1h-2zM23 23h12v1h-12zM37 23h2v1h-2zM9 24h2v1h-2zM23 24h12v1h-12zM37 24h2v1h-2zM9 25h2v1h-2zM37 25h2v1h-2zM9 26h2v1h-2zM37 26h2v1h-2zM9 27h2v1h-2zM37 27h2v1h-2zM9 28h2v1h-2zM37 28h2v1h-2zM9 29h2v1h-2zM37 29h2v1h-2zM9 30h2v1h-2zM23 30h12v1h-12zM37 30h2v1h-2zM9 31h2v1h-2zM23 31h12v1h-12zM37 31h2v1h-2zM9 32h2v1h-2zM37 32h2v1h-2zM9 33h2v1h-2zM37 33h2v1h-2zM9 34h2v1h-2zM37 34h2v1h-2zM9 35h2v1h-2zM37 35h2v1h-2zM9 36h2v1h-2zM37 36h2v1h-2zM9 37h2v1h-2zM37 37h2v1h-2zM9 38h2v1h-2zM23 38h12v1h-12zM37 38h2v1h-2zM9 39h2v1h-2zM23 39h12v1h-12zM37 39h2v1h-2zM9 40h2v1h-2zM37 40h2v1h-2zM9 41h2v1h-2zM37 41h2v1h-2zM9 42h30v1h-30zM9 43h30v1h-30z"/>
+    <g class="ir r1"><path class="ix" d="M13 15h5v1h-5zM13 16h1v1h-1zM17 16h1v1h-1zM13 17h1v1h-1zM17 17h1v1h-1zM13 18h1v1h-1zM17 18h1v1h-1zM13 19h5v1h-5z"/>
+      <rect x="13" y="17" width="1" height="1" style="animation-delay:0.120s"/><rect x="14" y="18" width="1" height="1" style="animation-delay:0.128s"/><rect x="14" y="17" width="1" height="1" style="animation-delay:0.136s"/><rect x="15" y="19" width="1" height="1" style="animation-delay:0.144s"/><rect x="15" y="18" width="1" height="1" style="animation-delay:0.152s"/><rect x="16" y="19" width="1" height="1" style="animation-delay:0.160s"/><rect x="16" y="18" width="1" height="1" style="animation-delay:0.168s"/><rect x="17" y="18" width="1" height="1" style="animation-delay:0.176s"/><rect x="17" y="17" width="1" height="1" style="animation-delay:0.184s"/><rect x="18" y="17" width="1" height="1" style="animation-delay:0.192s"/><rect x="18" y="16" width="1" height="1" style="animation-delay:0.200s"/><rect x="19" y="16" width="1" height="1" style="animation-delay:0.208s"/><rect x="19" y="15" width="1" height="1" style="animation-delay:0.216s"/><rect x="20" y="15" width="1" height="1" style="animation-delay:0.224s"/><rect x="20" y="14" width="1" height="1" style="animation-delay:0.232s"/><rect x="21" y="14" width="1" height="1" style="animation-delay:0.240s"/></g>
+    <g class="ir r2"><path class="ix" d="M13 22h5v1h-5zM13 23h1v1h-1zM17 23h1v1h-1zM13 24h1v1h-1zM17 24h1v1h-1zM13 25h1v1h-1zM17 25h1v1h-1zM13 26h5v1h-5z"/>
+      <rect x="13" y="24" width="1" height="1" style="animation-delay:0.270s"/><rect x="14" y="25" width="1" height="1" style="animation-delay:0.278s"/><rect x="14" y="24" width="1" height="1" style="animation-delay:0.286s"/><rect x="15" y="26" width="1" height="1" style="animation-delay:0.294s"/><rect x="15" y="25" width="1" height="1" style="animation-delay:0.302s"/><rect x="16" y="26" width="1" height="1" style="animation-delay:0.310s"/><rect x="16" y="25" width="1" height="1" style="animation-delay:0.318s"/><rect x="17" y="25" width="1" height="1" style="animation-delay:0.326s"/><rect x="17" y="24" width="1" height="1" style="animation-delay:0.334s"/><rect x="18" y="24" width="1" height="1" style="animation-delay:0.342s"/><rect x="18" y="23" width="1" height="1" style="animation-delay:0.350s"/><rect x="19" y="23" width="1" height="1" style="animation-delay:0.358s"/><rect x="19" y="22" width="1" height="1" style="animation-delay:0.366s"/><rect x="20" y="22" width="1" height="1" style="animation-delay:0.374s"/><rect x="20" y="21" width="1" height="1" style="animation-delay:0.382s"/><rect x="21" y="21" width="1" height="1" style="animation-delay:0.390s"/></g>
+    <g class="ir r3"><path class="ix" d="M13 29h5v1h-5zM13 30h1v1h-1zM17 30h1v1h-1zM13 31h1v1h-1zM17 31h1v1h-1zM13 32h1v1h-1zM17 32h1v1h-1zM13 33h5v1h-5z"/>
+      <rect x="13" y="31" width="1" height="1" style="animation-delay:0.420s"/><rect x="14" y="32" width="1" height="1" style="animation-delay:0.428s"/><rect x="14" y="31" width="1" height="1" style="animation-delay:0.436s"/><rect x="15" y="33" width="1" height="1" style="animation-delay:0.444s"/><rect x="15" y="32" width="1" height="1" style="animation-delay:0.452s"/><rect x="16" y="33" width="1" height="1" style="animation-delay:0.460s"/><rect x="16" y="32" width="1" height="1" style="animation-delay:0.468s"/><rect x="17" y="32" width="1" height="1" style="animation-delay:0.476s"/><rect x="17" y="31" width="1" height="1" style="animation-delay:0.484s"/><rect x="18" y="31" width="1" height="1" style="animation-delay:0.492s"/><rect x="18" y="30" width="1" height="1" style="animation-delay:0.500s"/><rect x="19" y="30" width="1" height="1" style="animation-delay:0.508s"/><rect x="19" y="29" width="1" height="1" style="animation-delay:0.516s"/><rect x="20" y="29" width="1" height="1" style="animation-delay:0.524s"/><rect x="20" y="28" width="1" height="1" style="animation-delay:0.532s"/><rect x="21" y="28" width="1" height="1" style="animation-delay:0.540s"/></g>
+    <g class="ir r4"><path class="ix" d="M13 36h5v1h-5zM13 37h1v1h-1zM17 37h1v1h-1zM13 38h1v1h-1zM17 38h1v1h-1zM13 39h1v1h-1zM17 39h1v1h-1zM13 40h5v1h-5z"/>
+      <rect x="13" y="38" width="1" height="1" style="animation-delay:0.570s"/><rect x="14" y="39" width="1" height="1" style="animation-delay:0.578s"/><rect x="14" y="38" width="1" height="1" style="animation-delay:0.586s"/><rect x="15" y="40" width="1" height="1" style="animation-delay:0.594s"/><rect x="15" y="39" width="1" height="1" style="animation-delay:0.602s"/><rect x="16" y="40" width="1" height="1" style="animation-delay:0.610s"/><rect x="16" y="39" width="1" height="1" style="animation-delay:0.618s"/><rect x="17" y="39" width="1" height="1" style="animation-delay:0.626s"/><rect x="17" y="38" width="1" height="1" style="animation-delay:0.634s"/><rect x="18" y="38" width="1" height="1" style="animation-delay:0.642s"/><rect x="18" y="37" width="1" height="1" style="animation-delay:0.650s"/><rect x="19" y="37" width="1" height="1" style="animation-delay:0.658s"/><rect x="19" y="36" width="1" height="1" style="animation-delay:0.666s"/><rect x="20" y="36" width="1" height="1" style="animation-delay:0.674s"/><rect x="20" y="35" width="1" height="1" style="animation-delay:0.682s"/><rect x="21" y="35" width="1" height="1" style="animation-delay:0.690s"/></g>
+  </svg>
+</div>
+
+<header class="band">
+  <div class="band-inner">
+    <button type="button" class="home" id="home-btn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-t="home"></span></button>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode"></button>
+    <h1>Open Source – Challenging Behavior Scale (OS-CBS)</h1>
+    <p class="by" data-t="by"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="msg" id="top-msg" role="status" aria-live="polite"></p>
+  <p class="hint"><a id="clinic-link" href="clinic.html" data-t="clinicianLink" hidden></a></p>
+
+  <section class="card" id="s-start" hidden>
+    <h2 data-t="startTitle"></h2>
+    <p data-t="startIntro"></p>
+    <label class="field" for="code-in" data-t="startCode"></label>
+    <input type="text" id="code-in" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" inputmode="text">
+    <p class="hint" data-t="startCodeHint"></p>
+    <fieldset class="choices" id="form-pick"><legend data-t="startWho"></legend></fieldset>
+    <p class="msg" id="start-msg" role="alert"></p>
+    <div class="btns"><button type="button" class="btn" id="start-go" data-t="start"></button></div>
+  </section>
+
+  <section class="card" id="s-setup" hidden>
+    <p class="visit" id="setup-visit"></p>
+    <h2 id="setup-version"></h2>
+    <p id="setup-fill"></p>
+    <p class="dir-head" data-t="instructions"></p>
+    <p id="setup-directions"></p>
+    <div class="btns"><button type="button" class="btn" id="setup-go" data-t="start"></button></div>
+  </section>
+
+  <section class="card" id="s-question" hidden>
+    <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+    <p class="progress" id="progress"></p>
+    <div class="qhead" id="qhead">
+      <p class="section-line" id="section-line"></p>
+      <p class="qtext" id="qtext" tabindex="-1"></p>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="nav"><button type="button" class="btn secondary" id="q-back" data-t="back"></button></div>
+    <div class="btns"><button type="button" class="btn secondary wide-btn" id="q-summary" data-t="summaryButton"></button></div>
+  </section>
+
+  <section class="card" id="s-review" hidden>
+    <h2 data-t="reviewTitle"></h2>
+    <p class="review-head" id="review-head"></p>
+    <ul class="review-list" id="review-list"></ul>
+    <p class="msg" id="review-msg" role="alert"></p>
+    <div class="btns"><button type="button" class="btn" id="review-submit" data-t="reviewSubmit"></button></div>
+  </section>
+
+  <section class="card" id="s-done" hidden>
+    <h2 data-t="doneTitle"></h2>
+    <p data-t="doneIntro"></p>
+    <p class="visit" id="done-visit"></p>
+    <div class="qr-wrap"><button type="button" class="qr-tap" id="qr-tap"><span class="qr" id="qr-box"></span></button></div>
+    <p class="hint noprint" data-t="qrTapHint"></p>
+    <p><strong data-t="doneCode"></strong></p>
+    <p class="code" id="done-code"></p>
+    <p class="hint" data-t="doneCodeHint"></p>
+    <div class="btns">
+      <button type="button" class="btn" id="done-send" data-t="doneSend"></button>
+      <button type="button" class="btn secondary" id="done-copy" data-t="doneCopy"></button>
+    </div>
+    <p class="link" id="done-link"></p>
+  </section>
+
+  <div class="btns noprint"><button type="button" class="btn secondary" id="clear-all" data-t="clear"></button></div>
+</main>
+
+<div id="qr-full" class="noprint" role="dialog" aria-modal="true" hidden>
+  <div id="qr-full-box"></div>
+  <button type="button" id="qr-close" data-t="qrClose"></button>
+</div>
+
+<footer class="band">
+  <div class="band-inner">
+    <p id="attr"></p>
+    <p class="sprite-credit"><a href="credits.html#os-cbs">Credits</a></p>
+  </div>
+</footer>
+
+<script src="oscbs-forms.js?v=1"></script>
+<script src="oscbs-score.js?v=1"></script>
+<script src="oscbs-codes.js?v=1"></script>
+<script src="vendor/qrcode-generator-2.0.4.js"></script>
+<script src="oscbs-page.js?v=1"></script>
+</body>
+</html>

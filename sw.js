@@ -4,16 +4,18 @@
 // Answers live after "#" in links and in localStorage. Browsers don't send the "#" part, but req.url includes it,
 // so it is removed before anything is fetched or saved.
 // Any ?v= bump, new or renamed file: update PRECACHE with the exact URL the page requests and bump CACHE.
-const CACHE = "adhd-forms-v23";
+const CACHE = "adhd-forms-v24";
 const PRECACHE = [
   "/", "/clinic.html", "/credits.html", "/credits.js", "/feedback.html", "/feedback.js?v=1", "/qi.html",
   "/manifest.webmanifest", "/clinic.webmanifest",
   "/shared.js?v=6", "/fonts/atkinson-hyperlegible-next-latin.woff2",
   "/vanderbilt-forms.js?v=3", "/vanderbilt-score.js?v=2", "/vanderbilt-codes.js?v=4",
   "/vanderbilt-strings-en.js?v=8", "/vanderbilt-page.js?v=11", "/vanderbilt-note-template.js?v=2",
-  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=13", "/vanderbilt-scan.js?v=2",
+  "/vanderbilt-report.js?v=3", "/vanderbilt-clinic.js?v=14", "/vanderbilt-scan.js?v=2",
   "/scared.html", "/scared-forms.js?v=2", "/scared-score.js?v=1", "/scared-codes.js?v=1", "/scared-page.js?v=3",
   "/scared-note-template.js?v=2", "/scared-report.js?v=2", "/scared-clinic.js?v=3",
+  "/oscbs.html", "/oscbs-forms.js?v=1", "/oscbs-score.js?v=1", "/oscbs-codes.js?v=1", "/oscbs-page.js?v=1",
+  "/oscbs-note-template.js?v=1", "/oscbs-report.js?v=1", "/oscbs-clinic.js?v=1",
   "/vendor/qrcode-generator-2.0.4.js", "/vendor/jsQR-1.4.0.js",
   "/favicon.svg", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png", "/icon-maskable-512.png",
 ];

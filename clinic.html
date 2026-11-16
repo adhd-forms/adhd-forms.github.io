@@ -115,6 +115,11 @@
   td.v.prob { color: var(--warn-text); font-weight: 700; }
   tr.disagree td { background: var(--hi-bg); }
   td.n { font-family: var(--mono); color: var(--heading); }
+  /* OS-CBS safety flags: a neutral tint, no red and no "elevated" wording (owner, 2026-11-16) */
+  td.v.flag { background: var(--hi-bg); color: var(--hi-text); font-weight: 700; }
+  .flagbox { background: var(--hi-bg); color: var(--hi-text); border-radius: var(--radius); padding: 10px 12px; margin: 12px 0 0; }
+  .flagbox h3 { color: var(--hi-text); font-size: calc(1.05rem * var(--tb, 1)); }
+  .flagbox ul { margin: 4px 0 0; padding-left: 20px; }
   .legend { font-size: calc(13px * var(--ts, 1)); margin: 0 0 6px; font-family: var(--small-font); font-weight: 500; }
   #scan-video { display: block; width: 100%; max-width: 420px; margin-top: 12px; border-radius: var(--radius); background: #000; }
   @media print {
@@ -240,6 +245,24 @@
       </details>
     </section>
 
+    <!-- OS-CBS (2026-11-16): parent/caregiver and teacher side by side, sums and workbook means, safety flags,
+         no cutoffs or interpretive text; oscbs-clinic.js fills it -->
+    <section class="card" id="o-report" hidden>
+      <div class="top"><span class="visit-big" id="o-visit"></span><span class="kind-big">OS-CBS</span></div>
+      <div class="btns noprint"><button type="button" class="btn" id="o-copy">Copy for Epic</button></div>
+      <pre class="note" id="o-note"></pre>
+      <div id="o-scales"></div>
+      <div id="o-flags"></div>
+      <p class="missing" id="o-missing" hidden></p>
+      <details class="drill">
+        <summary>Item by item</summary>
+        <p class="legend">Answers are 1 (Not at all a problem), 2 (Mild Problem), 3 (Moderate Problem), 4 (Severe Problem) and 5 (Very Severe Problem). Flagged high-risk items are tinted and marked "(flag)".</p>
+        <div id="o-items"></div>
+      </details>
+      <p class="legend" id="o-disclaimer"></p>
+      <p class="legend" id="o-citation"></p>
+    </section>
+
     <section class="card noprint">
       <h3>Print handouts</h3>
       <p class="legend">A family will only need one page. Each page has a randomized visit code and a matching QR code that opens the parent's form and/or teacher form: first-visit forms or follow-up forms. Be sure to write the visit code from the handout in the chart.</p>
@@ -263,6 +286,16 @@
       <div class="btns"><button type="button" class="btn" id="sh-print">Print SCARED handouts</button></div>
     </section>
 
+    <!-- OS-CBS (2026-11-16): one page per family, a new visit code, parent/caregiver and teacher QR codes; oscbs-clinic.js -->
+    <section class="card noprint">
+      <h3>Print OS-CBS handouts</h3>
+      <p class="legend">Open Source – Challenging Behavior Scale, ages 2-17. A family will only need one page. Each page has a randomized visit code and two QR codes: one opens the parent/caregiver form, the other the teacher form. Be sure to write the visit code from the handout in the chart.</p>
+      <div class="h-row">
+        <label>How many<br><input type="number" id="oh-count" min="1" max="50" value="20"></label>
+      </div>
+      <div class="btns"><button type="button" class="btn" id="oh-print">Print OS-CBS handouts</button></div>
+    </section>
+
     <!-- ADHD QI Project (owner, 2026-10-31): one page with the parent feedback QR, for rooms or to hand out -->
     <section class="card noprint">
       <h3>Print parent feedback QR</h3>
@@ -282,6 +315,7 @@
   <div class="band-inner">
     <p>Questions and scoring: NICHQ Vanderbilt Assessment Scales, Copyright ©2002 American Academy of Pediatrics and National Initiative for Children’s Healthcare Quality. Adapted from the Vanderbilt Rating Scales developed by Mark L. Wolraich, MD. Side effects adapted from the Pittsburgh side effects scale, developed by William E. Pelham, Jr, PhD. These scales should not be used alone to make a diagnosis.</p>
     <p id="scared-attr" hidden></p>
+    <p id="oscbs-attr" hidden></p>
     <p class="sprite-credit"><a href="credits.html">Credits</a><span class="gh-link" hidden> · <a href="https://github.com/adhd-forms/adhd-forms.github.io">Source code on GitHub</a></span></p>
   </div>
 </footer>
@@ -302,6 +336,12 @@
 <script src="scared-note-template.js?v=2"></script>
 <script src="scared-report.js?v=2"></script>
 <script src="scared-clinic.js?v=3"></script>
-<script src="vanderbilt-clinic.js?v=13"></script>
+<script src="oscbs-forms.js?v=1"></script>
+<script src="oscbs-score.js?v=1"></script>
+<script src="oscbs-codes.js?v=1"></script>
+<script src="oscbs-note-template.js?v=1"></script>
+<script src="oscbs-report.js?v=1"></script>
+<script src="oscbs-clinic.js?v=1"></script>
+<script src="vanderbilt-clinic.js?v=14"></script>
 </body>
 </html>

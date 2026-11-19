@@ -78,6 +78,7 @@
   .btn { font: inherit; font-weight: 600; font-size: calc(16px * var(--tb, 1)); border-radius: var(--radius); padding: 10px 20px; min-height: 48px; border: 1px solid var(--brand);
     background: var(--brand); color: var(--brand-text); cursor: pointer; }
   .btn.secondary { background: var(--nav); color: var(--heading); border-color: var(--edge); }
+  a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .btn:disabled { background: var(--nav); color: var(--body); border-color: var(--nav); cursor: not-allowed; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -308,6 +309,11 @@
       <button type="button" class="btn secondary" id="lock-btn">Lock clinician section</button>
     </div>
   </div>
+  <!-- Links to the other form pages (owner, 2026-11-19) -->
+  <nav class="btns noprint" aria-label="Other forms" style="margin-top:20px">
+    <a class="btn secondary" href="scared.html">SCARED anxiety forms</a>
+    <a class="btn secondary" href="oscbs.html">OS-CBS aggression and behavior forms</a>
+  </nav>
   <p class="noprint" style="margin:14px 0 0;font-size:calc(14.5px * var(--tb, 1))"><a href="./">Parent and teacher forms</a></p>
 </main>
 

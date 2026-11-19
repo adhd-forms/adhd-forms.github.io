@@ -80,7 +80,9 @@
     fillHere: "Fill in on this phone",
     sendLink: "Send link",
     sendDoctor: "Send to your doctor",
-    showDoctor: "Show to doctor",
+    // The packet's QR, shown right away (owner, 2026-11-19)
+    doctorTitle: "For your child's doctor",
+    doctorHow: "When the forms are done, you can either show this QR code to your child's physician at the visit, or tap \"Send to your doctor\" and paste the link in a MyChart message to them.",
     addByCode: "Add a result by code",
     addByCodeHint: "Paste a link or type a backup code from a teacher or the other parent.",
     addGo: "Add",

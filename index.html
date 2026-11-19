@@ -135,6 +135,7 @@
   .rows .who { color: var(--heading); }
   .rows .done::before { content: "✓ "; }
   .rows .btn { min-height: 44px; padding: 8px 14px; }
+  .doctor-title { margin-top: 20px; }
   .steps { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--brand); color: var(--heading); }
   input.wide { max-width: 100%; font-size: calc(16px * var(--tb, 1)); letter-spacing: .02em; text-transform: none; }
   .qr { forced-color-adjust: none; background: #FFFFFF; display: inline-block; padding: 0; line-height: 0; border: 1px solid var(--border); border-radius: var(--radius); }
@@ -287,9 +288,14 @@
     <h2 data-t="packetTitle"></h2>
     <p id="packet-intro"></p>
     <ul class="rows" id="packet-rows"></ul>
+    <!-- The packet's QR shows right away, with how to get it to the doctor (owner, 2026-11-19) -->
+    <h3 class="doctor-title" data-t="doctorTitle"></h3>
+    <p data-t="doctorHow"></p>
+    <button type="button" class="qr-tap" id="packet-qr-tap"><span class="qr" id="packet-qr"></span></button>
+    <p class="hint noprint" id="packet-qr-hint" data-t="qrTapHint"></p>
+    <p class="hint" id="packet-qr-large" data-t="qrLarge" hidden></p>
     <div class="btns">
       <button type="button" class="btn" id="packet-doctor" data-t="sendDoctor"></button>
-      <button type="button" class="btn secondary" id="packet-show" data-t="showDoctor"></button>
       <button type="button" class="btn secondary" id="packet-scan" data-t="scanTeacher"></button>
     </div>
     <p class="steps" id="doctor-steps" role="status" hidden></p>
@@ -353,7 +359,7 @@
 <script src="vanderbilt-codes.js?v=4"></script>
 <script src="vendor/qrcode-generator-2.0.4.js"></script>
 <script src="vanderbilt-scan.js?v=2"></script>
-<script src="vanderbilt-strings-en.js?v=8"></script>
-<script src="vanderbilt-page.js?v=11"></script>
+<script src="vanderbilt-strings-en.js?v=9"></script>
+<script src="vanderbilt-page.js?v=12"></script>
 </body>
 </html>

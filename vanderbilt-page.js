@@ -387,21 +387,27 @@
   }
 
   // The share panel's QR: tap it for full view; a big one gets a hint (owner, 2026-10-24).
-  let fullText = null, fullLabel = "";
-  function shareQR(text, label) {
-    const v = drawQR($("qr-box"), text, label);
-    fullText = v ? text : null; fullLabel = label;
-    $("qr-tap").disabled = !v;
-    if (v) $("qr-tap").setAttribute("aria-label", t("qrFullAria"));
-    else $("qr-tap").removeAttribute("aria-label"); // a screen reader then reads the "too much to fit" text
-    $("qr-tap-hint").hidden = !v;
-    $("qr-large").hidden = v < 25;
+  // The same goes for the packet's QR on the forms page (packet-qr-*), shown right away (owner, 2026-11-19).
+  let fullText = null, fullLabel = "", fullFrom = "qr-tap";
+  const qrText = {};
+  function placeQR(ids, text, label) {
+    const v = drawQR($(ids.box), text, label);
+    qrText[ids.tap] = v ? { text: text, label: label } : null;
+    $(ids.tap).disabled = !v;
+    if (v) $(ids.tap).setAttribute("aria-label", t("qrFullAria"));
+    else $(ids.tap).removeAttribute("aria-label"); // a screen reader then reads the "too much to fit" text
+    $(ids.hint).hidden = !v;
+    $(ids.large).hidden = v < 25;
   }
+  function shareQR(text, label) { placeQR({ box: "qr-box", tap: "qr-tap", hint: "qr-tap-hint", large: "qr-large" }, text, label); }
   // Full view: one history entry with the same address, so Back closes it without reloading the draft.
   // The screen is kept on while it shows, where the phone allows it.
   let wakeLock = null;
-  function openFull() {
-    if (!fullText) return;
+  function openFull(e) {
+    fullFrom = e.currentTarget.id;
+    const q = qrText[fullFrom];
+    if (!q) return;
+    fullText = q.text; fullLabel = q.label;
     drawQR($("qr-full-box"), fullText, fullLabel);
     $("qr-full").setAttribute("aria-label", fullLabel);
     $("qr-full").hidden = false;
@@ -414,10 +420,11 @@
     $("qr-full").hidden = true;
     $("qr-full-box").textContent = "";
     if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
-    $("qr-tap").focus();
+    $(fullFrom).focus();
   }
   function leaveFull() { if (history.state && history.state.qrFull) history.back(); else closeFull(); }
   $("qr-tap").addEventListener("click", openFull);
+  $("packet-qr-tap").addEventListener("click", openFull);
   $("qr-close").addEventListener("click", leaveFull);
   addEventListener("keydown", e => { if (e.key === "Escape" && !$("qr-full").hidden) leaveFull(); });
   addEventListener("popstate", closeFull);
@@ -457,6 +464,7 @@
     show("s-packet");
     st = null; showFooterFor(p.kind, "P1");
     $("packet-intro").textContent = t("packetIntro", { visit: C.formatVisitCode(p.visit) });
+    placeQR({ box: "packet-qr", tap: "packet-qr-tap", hint: "packet-qr-hint", large: "packet-qr-large" }, packetLink(p), t("packetQrLabel"));
     const ul = $("packet-rows");
     ul.textContent = "";
     SLOTS.forEach(slot => {
@@ -493,13 +501,6 @@
     const fallback = () => { steps.textContent = t("copyFallback"); steps.hidden = false; showPanel(text, link); };
     if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, fallback);
     else fallback();
-  });
-  $("packet-show").addEventListener("click", () => {
-    const link = packetLink(getPacket(packetVisit));
-    shareQR(link, t("packetQrLabel"));
-    $("share-text").textContent = link;
-    $("share-panel").hidden = false;
-    $("share-panel").scrollIntoView({ block: "nearest" });
   });
   // The answer shows right under the Add button (the top of the page is off-screen on a phone).
   $("add-go").addEventListener("click", () => {

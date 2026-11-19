@@ -28,26 +28,31 @@
   }
   const CLEAR_FIRST = "Clear the current results first.";
 
-  // ---------- timer (owner, 2026-11-03): page open, or Clear, to the first report on screen. Never stored or sent. ----------
+  // ---------- timer (owner, 2026-11-19): Start and Stop buttons, by hand. Never stored or sent. ----------
   let timerStart = 0, timerId = null;
   function showTimer(label) {
     const s = Math.floor((Date.now() - timerStart) / 1000), m = Math.floor(s / 60);
     $("timer").textContent = label + m + ":" + String(s % 60).padStart(2, "0");
   }
-  function startTimer() {
+  // Start always counts from 0:00, also after a Stop.
+  $("timer-start").addEventListener("click", () => {
     clearInterval(timerId);
     timerStart = Date.now();
     timerId = setInterval(() => showTimer("Time to score: "), 1000);
     showTimer("Time to score: ");
-  }
-  // Only the first report counts: later results leave the time as it is.
-  function stopTimer() {
+    $("timer-start").disabled = true;
+    $("timer-stop").disabled = false;
+    $("timer-stop").focus();
+  });
+  $("timer-stop").addEventListener("click", () => {
     if (timerId === null) return;
     clearInterval(timerId);
     timerId = null;
     showTimer("Scored in ");
-  }
-  startTimer();
+    $("timer-stop").disabled = true;
+    $("timer-start").disabled = false;
+    $("timer-start").focus();
+  });
 
   function setAddress() {
     history.replaceState(null, "", packet ? "#" + C.toLink(C.encodePacket(packet)).split("#")[1] : location.pathname);
@@ -199,7 +204,6 @@
         cells: [{ value: i.value, label: i.label, problem: i.problem }] }));
       tables.append(table("Performance: " + t.label, rows, [t.slot]));
     });
-    stopTimer();
   }
 
   $("copy-epic").addEventListener("click", () => {
@@ -237,7 +241,6 @@
     stopScan();
     if ((packet || openFamily()) && !confirm("Clear these results from this page?")) return;
     packet = null; FAMILIES.forEach(f => f.clinic.clear()); setAddress(); $("visit-in").value = ""; render();
-    startTimer();
     $("add-msg").textContent = "Cleared.";
     $("add-label").firstChild.textContent = "Add a result";
   });
@@ -355,7 +358,7 @@
     }
     render();
   }
-  FAMILIES.forEach(f => f.clinic.connect({ onReport: () => { render(); stopTimer(); } }));
+  FAMILIES.forEach(f => f.clinic.connect({ onReport: () => { render(); } }));
   addEventListener("hashchange", fromHash);
   fromHash();
   // For checks in the console only: run one frame through the same reader the scanner uses.

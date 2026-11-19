@@ -83,7 +83,10 @@
   .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .msg { margin: 10px 0 0; color: var(--warn-text); min-height: 1.4em; }
-  .timer { margin: 0 0 12px; font-family: var(--mono); color: var(--heading); font-variant-numeric: tabular-nums; }
+  .timer { margin: 0; font-family: var(--mono); color: var(--heading); font-variant-numeric: tabular-nums; }
+  .timer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: 0 0 12px; }
+  .timer-row .timer { flex: 1 0 100%; }
+  @media (min-width: 480px) { .timer-row .timer { flex: 0 1 auto; min-width: 13em; } }
   [hidden] { display: none !important; }
   input[type=text] { font: inherit; font-family: var(--mono); font-size: calc(16px * var(--tb, 1)); width: 100%; min-height: 48px; padding: 8px 12px;
     border: 1px solid var(--edge); border-radius: var(--radius); background: var(--soft); color: var(--heading); }
@@ -195,7 +198,12 @@
   </form>
 
   <div id="tool" data-pin-gated hidden>
-    <p class="timer noprint" id="timer" role="timer"></p>
+    <!-- Time to score (owner, 2026-11-19): started and stopped by hand; vanderbilt-clinic.js runs it -->
+    <div class="timer-row noprint">
+      <p class="timer" id="timer" role="timer">Time to score: 0:00</p>
+      <button type="button" class="btn" id="timer-start">Start</button>
+      <button type="button" class="btn secondary" id="timer-stop" disabled>Stop</button>
+    </div>
     <section class="card noprint">
       <label for="add-in" id="add-label"><strong>Add a result</strong></label>
       <p class="legend">Paste a link (from MyChart or a QR) or type a backup code.</p>
@@ -348,6 +356,6 @@
 <script src="oscbs-note-template.js?v=1"></script>
 <script src="oscbs-report.js?v=1"></script>
 <script src="oscbs-clinic.js?v=1"></script>
-<script src="vanderbilt-clinic.js?v=15"></script>
+<script src="vanderbilt-clinic.js?v=16"></script>
 </body>
 </html>

@@ -114,7 +114,18 @@
     box.append(el("h3", null, r.label));
     if (r.error) { box.append(el("p", "msg", "Could not be read.")); return box; }
     const res = r.result, ul = el("ul");
-    res.screens.forEach(s => ul.append(screenItem(s, kind)));
+    res.screens.forEach(s => {
+      ul.append(screenItem(s, kind));
+      // Combined presentation: inattentive and hyperactive both met (first-visit forms only; owner, 2026-11-19).
+      if (s.id === "hyperactive" && kind !== "followup" && res.combined) {
+        const li = el("li");
+        li.append(el("span", null, "Combined presentation: "));
+        if (res.combined.met) li.append(el("span", "met", "met"));
+        else if (res.combined.couldBeMet) li.append(el("span", "could", "could be met"));
+        else li.append(el("span", null, "not met"));
+        ul.append(li);
+      }
+    });
     const t = res.total;
     ul.append(el("li", null, "Total symptom score: " + t.sum + "/" + t.of * 3 + (t.answered < t.of ? " (" + t.answered + " of " + t.of + " answered)" : "")));
     const p = res.perf;

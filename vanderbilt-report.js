@@ -93,6 +93,12 @@
       if (s.couldBeMet) status = s.skipped ? fill(T.statusCould, { skipped: s.skipped }) : T.statusCouldPerf;
       return fill(T.screen, { name: name, positive: s.positive, of: s.of, status: status });
     });
+    // Combined presentation right after the hyperactive screen (first-visit forms only; owner, 2026-11-19).
+    if (kind !== "followup" && res.combined) {
+      const at = res.screens.findIndex(s => s.id === "hyperactive");
+      const status = res.combined.met ? T.statusMet : res.combined.couldBeMet ? T.combinedCould : T.statusNotMet;
+      screens.splice(at + 1, 0, fill(T.combined, { status: status }));
+    }
     parts.push(screens.join(", "));
     const top = Math.max.apply(null, F.SCALES.symptom.map(x => x.value)); // 3 = "Very Often"
     parts.push(fill(T.total, { sum: res.total.sum, max: res.total.of * top }) +

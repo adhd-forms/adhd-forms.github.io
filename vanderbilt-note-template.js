@@ -32,6 +32,10 @@
     statusNotMet: "not met",
     statusCould: "could be met, {skipped} skipped",
     statusCouldPerf: "could be met, performance items skipped",
+    // Combined presentation: inattentive and hyperactive both met (first-visit forms only), placed right
+    // after the hyperactive screen. {status} is statusMet, statusNotMet or combinedCould (owner, 2026-11-19).
+    combined: "Combined ({status})",
+    combinedCould: "could be met",
     screenCount: "{name} {positive}/{of}",                // follow-ups: counts only, no met label
     screenCountSkipped: " ({skipped} skipped)",
 
